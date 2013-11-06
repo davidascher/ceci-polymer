@@ -1,0 +1,45 @@
+<polymer-element name="ceci-listen" attributes="on for">
+  <template>
+    <content></content>
+  </template>
+  <script>
+    (function () {
+      var _element = null;
+      var _handlerName = null;
+      var _channel = '';
+
+      function eventHandler (e) {
+        if (_element && _element[_handlerName]) {
+          _element[_handlerName](e.detail.data, e.detail.extra);
+        }
+      }
+
+      Polymer('ceci-listen', {
+        ready: function () {
+        },
+        update: function (oldValue) {
+          document.removeEventListener(_channel, eventHandler, false);
+          _channel = this.getAttribute('on');
+          _handlerName = this.getAttribute('for');
+          document.addEventListener(_channel, eventHandler, false);
+          this.updateContainerElement();
+        },
+        updateContainerElement: function () {
+          while (true) {
+            _element = this.parentNode;
+            if (!_element) break;
+            if (_element.localName.indexOf('ceci-') === 0 && ['ceci-listen', 'ceci-broadcast'].indexOf(_element.localName) === -1) {
+              break;
+            }
+          }
+        },
+        onChanged: function (oldValue, newValue) {
+          this.update();
+        },
+        forChanged: function (oldValue, newValue) {
+          this.update();
+        }
+      });
+    })();
+  </script>
+</polymer-element>

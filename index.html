@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="polymer.min.js"></script>
+    <link rel="import" href="ceci-broadcast.html">
+    <link rel="import" href="ceci-listen.html">
+    <link rel="import" href="ceci-element.html">
+    <link rel="import" href="ceci-app.html">
+    <link rel="import" href="ceci-card.html">
+    <link rel="import" href="ceci-button.html">
+    <link rel="import" href="ceci-hello.html">
+    <style>
+    </style>
+  </head>
+  <body>
+    <ceci-app>
+      <ceci-card>
+        <ceci-top>
+          <ceci-button label="Say hello!" value="hi"><ceci-broadcast on="blue" from="click"></ceci-broadcast></ceci-button>
+        </ceci-top>
+        <ceci-middle>
+          <ceci-hello><ceci-listen on="blue" for="hello"></ceci-listen></ceci-hello>
+        </ceci-middle>
+        <ceci-bottom>
+          <ceci-button label="Say goodbye!" value="bye"><ceci-broadcast on="blue" from="click"></ceci-broadcast></ceci-button>
+        </ceci-bottom>
+      </ceci-card>
+    </ceci-app>
+  </body>
+</html>

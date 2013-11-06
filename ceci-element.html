@@ -1,0 +1,17 @@
+<polymer-element name="ceci-element">
+  <template>
+    <content></content>
+  </template>
+  <script>
+    Polymer('ceci-element', {
+      ready: function () {
+      },
+      broadcast: function (name, data) {
+        var broadcastElement = this.querySelector('ceci-broadcast[from="' + name + '"]');
+        if (broadcastElement) {
+          broadcastElement.fire(data);
+        }
+      }
+    });
+  </script>
+</polymer-element>

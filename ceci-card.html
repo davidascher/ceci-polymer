@@ -1,0 +1,36 @@
+<polymer-element name="ceci-card">
+  <template>
+    <style>
+      :host ceci-top, :host ceci-bottom {
+        position: absolute;
+        height: 50px;
+        width: 100%;
+      }
+
+      :host ceci-top {
+        top: 0;
+      }
+
+      :host ceci-bottom {
+        bottom: 0;
+      }
+
+      :host ceci-middle {
+        position: absolute;
+        top: 50px;
+        bottom: 50px;
+        left: 0;
+        right: 0;
+      }
+    </style>
+    <content select="ceci-top"></content>
+    <content select="ceci-middle"></content>
+    <content select="ceci-bottom"></content>
+  </template>
+  <script>
+    Polymer('ceci-card', {
+      ready: function () {
+      }
+    });
+  </script>
+</polymer-element>
