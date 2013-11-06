@@ -14,15 +14,26 @@
   </head>
   <body>
     <ceci-app>
-      <ceci-card>
+      <ceci-card visible>
+        <ceci-listen on="green" for="show"></ceci-listen>
         <ceci-top>
           <ceci-button label="Say hello!" value="hi"><ceci-broadcast on="blue" from="click"></ceci-broadcast></ceci-button>
         </ceci-top>
         <ceci-middle>
+          <ceci-button label="Flip!"><ceci-broadcast on="red" from="click"></ceci-broadcast></ceci-button>
           <ceci-hello><ceci-listen on="blue" for="hello"></ceci-listen></ceci-hello>
         </ceci-middle>
         <ceci-bottom>
           <ceci-button label="Say goodbye!" value="bye"><ceci-broadcast on="blue" from="click"></ceci-broadcast></ceci-button>
+        </ceci-bottom>
+      </ceci-card>
+      <ceci-card>
+        <ceci-listen on="red" for="show"></ceci-listen>
+        <ceci-middle>
+          <ceci-hello status="UHOH"></ceci-hello>
+        </ceci-middle>
+        <ceci-bottom>
+          <ceci-button label="Go back!"><ceci-broadcast on="green" from="click"></ceci-broadcast></ceci-button>
         </ceci-bottom>
       </ceci-card>
     </ceci-app>

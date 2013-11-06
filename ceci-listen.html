@@ -3,43 +3,46 @@
     <content></content>
   </template>
   <script>
-    (function () {
-      var _element = null;
-      var _handlerName = null;
-      var _channel = '';
-
-      function eventHandler (e) {
-        if (_element && _element[_handlerName]) {
-          _element[_handlerName](e.detail.data, e.detail.extra);
-        }
-      }
-
-      Polymer('ceci-listen', {
-        ready: function () {
-        },
-        update: function (oldValue) {
-          document.removeEventListener(_channel, eventHandler, false);
-          _channel = this.getAttribute('on');
-          _handlerName = this.getAttribute('for');
-          document.addEventListener(_channel, eventHandler, false);
-          this.updateContainerElement();
-        },
-        updateContainerElement: function () {
-          while (true) {
-            _element = this.parentNode;
-            if (!_element) break;
-            if (_element.localName.indexOf('ceci-') === 0 && ['ceci-listen', 'ceci-broadcast'].indexOf(_element.localName) === -1) {
-              break;
-            }
+    Polymer('ceci-listen', {
+      ready: function () {
+        var that = this;
+        this._eventListener = function (e) {
+          if (that._element && that._element[that._handler]) {
+            that._element[that._handler](e.detail.data, e.detail.extra);
           }
-        },
-        onChanged: function (oldValue, newValue) {
-          this.update();
-        },
-        forChanged: function (oldValue, newValue) {
-          this.update();
+        };
+      },
+      _element: null,
+      _handler: null,
+      _channel: null,
+      _eventListener: null,
+      update: function () {
+        if (this._channel) {
+          document.removeEventListener(this._channel, this._eventListener, false);
         }
-      });
-    })();
+
+        this._handler = this.getAttribute('for');
+        this._channel = this.getAttribute('on');
+
+        this.updateContainerElement();
+
+        document.addEventListener(this._channel, this._eventListener, false);
+      },
+      updateContainerElement: function () {
+        while (true) {
+          this._element = this.parentNode;
+          if (!this._element) break;
+          if (this._element.localName.indexOf('ceci-') === 0 && ['ceci-listen', 'ceci-broadcast'].indexOf(this._element.localName) === -1) {
+            break;
+          }
+        }
+      },
+      onChanged: function (oldValue, newValue) {
+        this.update();
+      },
+      forChanged: function (oldValue, newValue) {
+        this.update();
+      }
+    });
   </script>
 </polymer-element>
