@@ -1,0 +1,18 @@
+<!ELEMENT ceci-app (ceci-card+)>
+
+<!ELEMENT ceci-listen EMPTY>
+<!ATTLIST ceci-listen
+  for CDATA #IMPLIED
+  on CDATA #IMPLIED>
+
+<!ELEMENT ceci-broadcast EMPTY>
+<!ATTLIST ceci-broadcast
+  from CDATA #IMPLIED
+  on CDATA #IMPLIED>
+
+<!ELEMENT ceci-top ANY>
+<!ELEMENT ceci-middle ANY>
+<!ELEMENT ceci-bottom ANY>
+
+<!ELEMENT ceci-card (ceci-listen?, ceci-top, ceci-middle, ceci-bottom)>
+<!ATTLIST ceci-card visible CDATA #IMPLIED>

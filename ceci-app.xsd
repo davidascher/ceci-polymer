@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="ceci-listen" />
+  <xsd:element name="ceci-broadcast" />
+  <xsd:element name="ceci-app">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="ceci-card">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:choice maxOccurs="unbounded" minOccurs="0">
+                  <xsd:element ref="ceci-listen" />
+                  <xsd:element ref="ceci-broadcast" />
+                </xsd:choice>
+                <xsd:element name="ceci-top">
+                  <xsd:complexType>
+                    <xsd:choice maxOccurs="unbounded" minOccurs="0">
+                      <xsd:element ref="ceci-listen" />
+                      <xsd:element ref="ceci-broadcast" />
+                    </xsd:choice>
+                  </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="ceci-middle">
+                  <xsd:complexType>
+                    <xsd:choice maxOccurs="unbounded" minOccurs="0">
+                      <xsd:element ref="ceci-listen" />
+                      <xsd:element ref="ceci-broadcast" />
+                    </xsd:choice>
+                  </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="ceci-bottom">
+                  <xsd:complexType>
+                    <xsd:choice maxOccurs="unbounded" minOccurs="0">
+                      <xsd:element ref="ceci-listen" />
+                      <xsd:element ref="ceci-broadcast" />
+                    </xsd:choice>
+                  </xsd:complexType>
+                </xsd:element>
+              </xsd:sequence>
+              <xsd:attribute name="visible" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

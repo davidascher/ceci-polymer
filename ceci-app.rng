@@ -1,0 +1,77 @@
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+  <start>
+    <element name="ceci-app">
+      <oneOrMore>
+        <ref name="ceci-card" />
+      </oneOrMore>
+    </element>
+  </start>
+
+  <define name="ceci-listen">
+    <element name="ceci-listen">
+      <attribute name="for"><text /></attribute>
+      <attribute name="on"><text /></attribute>
+    </element>
+  </define>
+
+  <define name="ceci-broadcast">
+    <element name="ceci-broadcast">
+      <attribute name="from"><text /></attribute>
+      <attribute name="on"><text /></attribute>
+    </element>
+  </define>
+
+  <define name="ceci-top">
+    <element name="ceci-top">
+      <ref name="card-content" />
+      <zeroOrMore><ref name="ceci-listen" /></zeroOrMore>
+      <zeroOrMore><ref name="ceci-broadcast" /></zeroOrMore>
+    </element>
+  </define>
+
+  <define name="ceci-middle">
+    <element name="ceci-middle">
+      <ref name="card-content" />
+      <zeroOrMore><ref name="ceci-listen" /></zeroOrMore>
+      <zeroOrMore><ref name="ceci-broadcast" /></zeroOrMore>
+    </element>
+  </define>
+
+  <define name="ceci-bottom">
+    <element name="ceci-bottom">
+      <ref name="card-content" />
+      <zeroOrMore><ref name="ceci-listen" /></zeroOrMore>
+      <zeroOrMore><ref name="ceci-broadcast" /></zeroOrMore>
+    </element>
+  </define>
+
+  <define name="subscriptions">
+    <zeroOrMore><ref name="ceci-listen" /></zeroOrMore>
+    <zeroOrMore><ref name="ceci-broadcast" /></zeroOrMore>
+  </define>
+
+  <define name="ceci-card">
+    <element name="ceci-card">
+      <optional>
+        <attribute name="visible"><text /></attribute>
+      </optional>
+      <ref name="subscriptions" />
+      <ref name="ceci-top" />
+      <ref name="ceci-middle" />
+      <ref name="ceci-bottom" />
+    </element>
+  </define>
+
+  <define name="card-content">
+    <sch:pattern name="Check that element is a ceci- element." xmlns:sch="http://www.ascc.net/xml/schematron">
+      <sch:rule context="">
+        <sch:assert test="starts-with(local-name(), 'ceci-')">
+          Element starts with 'ceci-'
+        </sch:assert>
+      </sch:rule>
+    </sch:pattern>
+    <ref name="subscriptions" />
+  </define>
+
+
+</grammar>
