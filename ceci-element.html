@@ -59,19 +59,23 @@
 
           if (Array.isArray(definition.defaultListeners)) {
             definition.defaultListeners.forEach(function (listenerName) {
-              var listener = document.createElement('ceci-listen');
-              listener.setAttribute('on', defaultChannel);
-              listener.setAttribute('for', listenerName);
-              that.appendChild(listener);
+              if (!that.querySelector('ceci-listen[for="' + listenerName + '"]')) {
+                var listener = document.createElement('ceci-listen');
+                listener.setAttribute('on', defaultChannel);
+                listener.setAttribute('for', listenerName);
+                that.appendChild(listener);
+              }
             });
           }
 
           if (Array.isArray(definition.defaultBroadcasts)) {
             definition.defaultBroadcasts.forEach(function (broadcastName) {
-              var broadcast = document.createElement('ceci-broadcast');
-              broadcast.setAttribute('on', defaultChannel);
-              broadcast.setAttribute('from', broadcastName);
-              that.appendChild(broadcast);
+              if (!that.querySelector('ceci-broadcast[from="' + broadcastName + '"]')) {
+                var broadcast = document.createElement('ceci-broadcast');
+                broadcast.setAttribute('on', defaultChannel);
+                broadcast.setAttribute('from', broadcastName);
+                that.appendChild(broadcast);
+              }
             });
           }
         }
