@@ -14,6 +14,42 @@
   <script>
     Polymer('ceci-app', {
       ready: function () {
+        this.dispatchEvent(new CustomEvent('ready', {bubbles: true, detail: this}));
+      },
+      addCard: function () {
+        var newCard = document.createElement('ceci-card');
+        this.appendChild(newCard);
+        newCard.show();
+        this.dispatchEvent(new CustomEvent('cardadded', {bubbles: true, detail: newCard}));
+      },
+      removeCard: function (index) {
+        index += 1;
+
+        var card = this.querySelector('ceci-card:nth-child(' + index + ')');
+        var nextCard = this.querySelector('ceci-card:nth-child(' + (index + 1) + ')')
+          || this.querySelector('ceci-card:nth-child(' + (index - 1) + ')');
+
+        if (card) {
+          this.removeChild(card);
+
+          if (card.getAttribute('visible') && nextCard) {
+            nextCard.show();
+          }
+
+          this.dispatchEvent(new CustomEvent('cardremoved', {bubbles: true, detail: card}));
+        }
+        else {
+          console.error('No such card.');
+        }
+      },
+      countCards: function () {
+        return this.querySelectorAll('ceci-card').length;
+      },
+      clearCards: function () {
+        var card;
+        while (card = this.querySelector('ceci-card')) {
+          this.removeChild(card);
+        }
       }
     });
   </script>

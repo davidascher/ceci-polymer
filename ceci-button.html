@@ -19,6 +19,10 @@
   <script>
     Polymer('ceci-button', {
       ready: function () {
+        this.ceci({
+          broadcasts: ['click'],
+          defaultBroadcasts: ['click']
+        });
       },
       buttonClick: function () {
         this.broadcast('click', this.getAttribute('value'));

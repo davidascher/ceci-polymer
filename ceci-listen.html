@@ -17,7 +17,7 @@
       _channel: null,
       _eventListener: null,
       update: function () {
-        if (this._channel) {
+        if (this._channel && this._eventListener) {
           document.removeEventListener(this._channel, this._eventListener, false);
         }
 
@@ -27,6 +27,11 @@
         this.updateContainerElement();
 
         document.addEventListener(this._channel, this._eventListener, false);
+      },
+      leftView: function () {
+        if (this._channel && this._eventListener) {
+          document.removeEventListener(this._channel, this._eventListener, false);
+        }
       },
       updateContainerElement: function () {
         while (true) {
