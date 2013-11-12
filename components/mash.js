@@ -2,7 +2,7 @@ var fs = require('fs');
 
 fs.readdir(__dirname, function (err, files) {
   files.forEach(function (cssFilename, cssFilenameIndex) {
-    if (cssFilename.indexOf('counter') === -1) return;
+    // if (cssFilename.indexOf('counter') === -1) return;
     var cssFilenameMatch = cssFilename.match(/^app-([^\.]+).css$/);
     if (cssFilenameMatch) {
       fs.readFile(__dirname + '/' + cssFilename, 'utf8', function (cssFileErr, cssFileData) {
@@ -36,7 +36,9 @@ fs.readdir(__dirname, function (err, files) {
             var oldStylesheetRegexp = new RegExp('<link rel="stylesheet" href="\{\{ASSET_HOST\}\}.*' + cssFilename + '"\s*/?\s*>(</link>)?');
 
             htmlFileData = htmlFileData.replace(oldStylesheetRegexp, '');
-console.log(cssFileData);
+
+            // console.log(cssFileData);
+
             fs.writeFile(__dirname + '/' + htmlFileName, htmlFileData);
           });
         }
