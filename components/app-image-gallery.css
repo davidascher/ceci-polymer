@@ -1,0 +1,228 @@
+app-image-gallery {
+  background: #333;
+}
+
+app-image-gallery h1 {
+  padding: 0 0 .5rem 0;
+  font-size: 16px; font-size: 1.6rem;
+  text-align: left;
+  font-weight: 400;
+  padding: 0;
+  position: relative;
+  background: #222;
+  padding-right: 1.5rem;
+  padding: 1.5rem;
+  color: #DDD;
+}
+
+app-image-gallery h1 .item-count-wrapper {
+  font-size: 1.6rem;
+  color: #888;
+  padding-left: 5px;
+}
+
+app-image-gallery .folder-content-wrapper {
+  padding: 1rem 1rem 1.5rem 1rem;
+}
+
+app-image-gallery table {
+  background: white;
+  width: 100%;
+  border-top: solid 1px #DDD;
+  border-bottom: solid 1px #BBB;
+  border-left: solid 1px #DDD;
+  margin-bottom: 12px;
+}
+
+app-image-gallery table td {
+  border-right: solid 1px #CCC;
+  border-bottom: solid 1px #CCC;
+  padding: 5px;
+  color: #666;
+  font-size: 1.3rem;
+}
+
+app-image-gallery ul, app-data-list ul, app-image-gallery ol, app-data-list ol {
+  margin: 0;
+  list-style-type: none;
+  padding: 0;
+  display: block;
+}
+
+app-image-gallery .photos {
+  padding: 1rem 0rem;
+  position: relative;
+  -webkit-transition: left linear .1s;
+  -moz-transition: left linear .1s;
+}
+
+app-image-gallery .data-view-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+app-image-gallery .data-view-toggle a {
+  background: white;
+  color: #555;
+  font-size: 13px;
+  display: block;
+  padding: 5px;
+  text-align: center;
+  float: left;
+  background-image: -webkit-linear-gradient(white,#ddd);
+}
+
+app-image-gallery .data-view-toggle a .icon {
+  display: block;
+  height: 15px;
+  width: 15px;
+}
+
+app-image-gallery .data-view-toggle a[show='single'] .icon {
+  background: url("/assets/images/photo-folder/single-on.png?6");
+}
+
+app-image-gallery .data-view-toggle a[show='thumbnails'] .icon {
+  background: url("/assets/images/photo-folder/thumbs-on.png?6");
+}
+
+
+app-image-gallery .data-view-toggle a.selected-item {
+  background: #999;
+  color: #DDD;
+  box-shadow: inset 0px 0px 10px rgba(0,0,0,.2);
+  background: -webkit-linear-gradient(#777,#999);
+}
+
+app-image-gallery .data-view-toggle a:first-child {
+  border-radius: 2px 0 0 2px;
+}
+
+app-image-gallery .data-view-toggle a:last-child {
+  border-radius: 0 2px 2px 0;
+}
+
+app-image-gallery .delete-image {
+  color: white;
+  font-weight: bold;
+  background: #333;
+  border: solid 2px white;
+  position: absolute;
+  top: -7px;
+  right: -10px;
+  padding: 1px 6px;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+app-image-gallery .photos {
+  margin: 0 !important;
+}
+
+/*Single Photo Styles*/
+
+app-image-gallery .single {
+  width: 290px;
+  margin-bottom: .5rem;
+  overflow: hidden;
+}
+
+app-image-gallery .single .image-wrapper {
+  text-align: center;
+  position: relative;
+  float: left;
+  margin: 0;
+  width: 290px;
+}
+
+app-image-gallery .single .image-wrapper .image-container {
+  display: inline-block;
+  margin: 0 auto;
+  position: relative;
+}
+
+app-image-gallery .single .image-wrapper img {
+  max-width: 270px;
+  box-shadow: 0px 2px 3px rgba(0,0,0,.2);
+  display: block;
+  margin: 0 auto;
+}
+
+app-image-gallery .single .image-caption {
+  padding-top: 1rem;
+  color: #999;
+}
+
+app-image-gallery .thumbnails {
+  overflow: auto;
+  width: 280px;
+  margin: 0 auto;
+}
+
+app-image-gallery .thumbnails .image-wrapper {
+  position: relative;
+  width: 83px;
+  height: 83px;
+  padding: 5px;
+  text-align: center;
+  float: left;
+}
+
+app-image-gallery .thumbnails .image-wrapper img {
+  box-shadow: 0px 2px 3px rgba(0,0,0,.2);
+  max-width: 100%;
+  max-height: 100%;
+  display: inline;
+  cursor: pointer;
+}
+
+app-image-gallery li, app-data-list li {
+  font-size: 12px; font-size: 1.2rem;
+  font-family: "FiraSans", sans-serif;
+  border: solid .1rem #d9d9d9;
+  padding: 1rem;
+  background: white;
+  margin-bottom: .5rem;
+}
+
+app-image-gallery .show-single .single {
+  display: block;
+}
+
+app-image-gallery .thumbnails,
+app-image-gallery .single {
+  display: none;
+}
+
+app-image-gallery .show-thumbnails .thumbnails {
+  display: block;
+}
+
+app-image-gallery .emit-wrapper {
+  background: #776531;
+  padding: 1rem;
+}
+
+app-image-gallery .emit-wrapper a {
+  color: white;
+  border-radius: 3px;
+  font-size: 13px;
+  display: inline-block;
+}
+
+app-image-gallery .emit-wrapper label {
+  display: block;
+}
+
+app-image-gallery .warp-in {
+  -webkit-animation-name: warpin;
+  -webkit-animation-duration: .1s;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-iteration-count: 1;
+}
+
+@-webkit-keyframes warpin {
+	0% {-webkit-transform: scale(.4); opacity: .2; }
+	100% {-webkit-transform: rotate(1); opacity: 1; }
+}

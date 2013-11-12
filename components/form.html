@@ -1,0 +1,112 @@
+<element name="app-form">
+  <template>
+    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-form.css"></link>
+    <style type="text/css">
+    </style>
+    <h1>Form Title</h1>
+    <div class="form-items">
+    </div>
+    <div>
+      <button class="button">Default</button>
+    </div>
+  </template>
+  <friends>app-fireworks,app-counter</friends>
+  <tags>form,data</tags>
+  <thumbnail>
+    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-form.png" />
+  </thumbnail>
+  <description>
+    Broadcasts a "Click!" message when clicked.
+  </description>
+  <script type="text/ceci">
+    Ceci(this, {
+      init: function (params) {
+        var button = this.querySelector('button')
+        var t = this;
+        button.onclick = function () {
+          t.sendData();
+        }
+
+        this.setAttribute('formTitle', this.getAttribute("formTitle") || 'Form Title');
+        this.setAttribute('buttonLabel', this.getAttribute("buttonLabel") || 'Submit');
+        this.setAttribute('buttonColor', this.getAttribute("buttonColor") || '#4DB227');
+        this.setAttribute('textColor', this.getAttribute("textColor") || '#FFFFFF');
+        this.setAttribute("formFields", this.getAttribute("formFields")|| JSON.stringify(["Field 1","Field 2","Field 3"]));
+
+      },
+      buildForm : function(v){
+        var options = JSON.parse(v);
+        this.querySelector(".form-items").innerHTML = "";
+        for(var key in options) {
+          var item = document.createElement("input");
+          item.setAttribute("type","text")
+          item.setAttribute("placeholder",options[key])
+          this.querySelector(".form-items").appendChild(item);
+        }
+      },
+      sendData : function() {
+        var inputs = $(this).find(".form-items input");
+        console.log(inputs);
+        var sendData = []
+        $(inputs).each(function(i,input){
+          var item = {};
+          item["name"] = $(this).attr("placeholder");
+          item["value"] = $(this).val();
+          sendData.push(item);
+        });
+        this.broadcast('send', JSON.stringify(sendData));
+      },
+      editable: {
+        formTitle: {
+          type: "text",
+          description: "A text for your label to show up in your app",
+          postset: function(v) {
+            this.setTitle(v);
+          }
+        },
+        formFields: {
+          type: "multiple",
+          description: "Menu Options",
+          postset: function(v) {
+            this.buildForm(v);
+          }
+        },
+        buttonLabel: {
+          type: "text",
+          description: "A text for your label to show up in your app",
+          postset: function(v) {
+            this.setLabel(v);
+          }
+        },
+        textColor: {
+          type: "text",
+          description: "The color of the button label",
+          postset: function(v) {
+            this.setTextColor(v);
+          }
+        },
+        buttonColor: {
+          type: "text",
+          description: "The color of your button",
+          postset: function(v) {
+            this.setButtonColor(v);
+          }
+        }
+      },
+      setTitle: function (val) {
+        this.querySelector('h1').innerHTML = val;
+      },
+      setLabel: function (val) {
+        this.querySelector('button').innerHTML = val;
+      },
+      setButtonColor: function (val) {
+        this.querySelector('button').style.backgroundColor = val;
+      },
+      setTextColor: function (val) {
+        this.querySelector('button').style.color = val;
+      },
+      broadcasts: ['send'],
+      defaultBroadcasts: ['send']
+    });
+  </script>
+</element>

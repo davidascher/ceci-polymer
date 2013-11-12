@@ -1,0 +1,33 @@
+<element name="app-text">
+  <template>
+    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-textbox.css">
+    <p></p>
+  </template>
+  <description>Listen for a message and updates text</description>
+  <thumbnail>
+    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-textbox.png" />
+  </thumbnail>
+  <tags>input,text,form</tags>
+  <script type="text/ceci">
+    Ceci(this, {
+      init: function (params) {
+        this.setValue('Heading');
+        this.setAttribute('text',"I'm a text box.")
+      },
+      editable: {
+        text: {
+          type: "text",
+          description: "A text for your label to show up in your app",
+          postset: function(v) {
+            this.setValue(v);
+          }
+        }
+      },
+      listeners: {
+        setValue: function (val) {
+          this.querySelector('p').innerHTML = val.toString();
+        }
+      }
+    });
+  </script>
+</element>

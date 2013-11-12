@@ -1,0 +1,120 @@
+<element name="app-metronome">
+
+  <template>
+    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-metronome.css">
+    <div class="metronome-wrapper">
+      <div class="metronome-shadow"></div>
+      <div class="metronome-body">
+        <div class="metronome-hole"></div>
+        <div class="metronome-arrow"></div>
+      </div>
+    </div>
+  </template>
+  <tags>fun,animated,starter</tags>
+  <description>Counts the beat and sends out the beat count.</description>
+  <thumbnail>
+    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-metronome.png" />
+  </thumbnail>
+  <script type="text/ceci">
+    Ceci(this, {
+      init: function() {
+        this.period = this.getAttribute("period") || 1;
+        this.count = 0;
+
+        var autoStart = this.getAttribute("autostart");
+        if (!autoStart){
+          autoStart = "true";
+        }
+        autoStart = autoStart.toLowerCase() === "true";
+
+        if (autoStart){
+          this.start();
+        }
+        else {
+          this.stop();
+        }
+
+        this.timeout = null;
+
+      },
+      setArrowSpeed : function(v){
+        var animDuration = v * 2;
+        var metronomeArrow = this.querySelector('.metronome-arrow');
+        metronomeArrow.classList.remove("metronome-animation");
+        if (v > 0 && !this.stopped){
+          metronomeArrow.offsetWidth = metronomeArrow.offsetWidth;
+          metronomeArrow.classList.add("metronome-animation");
+          metronomeArrow.style.webkitAnimationDuration = animDuration + "s";
+          metronomeArrow.style.animationDuration = animDuration + "s";
+        }
+      },
+      broadcast: function (e) {
+        this.emit(e);
+      },
+      onUnload: function (e) {
+        clearTimeout(this.timeout);
+      },
+      tick: function() {
+        if (this.unloaded || this.stopped){
+          // This stops the setting of the next setTimeout
+          return;
+        }
+        this.count++;
+        this.broadcast('tick', this.count);
+
+        // Emitting Animation Beta
+
+        var t = this;
+        var defer = function(){
+          t.tick();
+        };
+        this.timeout = setTimeout(defer, this.period*1000);
+      },
+      editable: {
+        "period": {
+          title: "Metronome Period",
+          min : .1,
+          max: 100,
+          type: "number",
+          description: "Set the period between metronome ticks",
+          postset: function(v) {
+            this.setArrowSpeed(v);
+          }
+        },
+        "autoStart": {
+          title: "Start on Load",
+          type: "boolean",
+          description: "Optionally starts the metronome when the app loads.",
+          postset: function(v){
+            console.log("POST SET:", v);
+            if (v === "true"){
+              this.start();
+            }
+            else{
+              this.stop();
+            }
+          }
+        }
+      },
+      listeners: {
+        setPeriod: function (val) {
+          val = parseInt(val);
+          if (val > 0) {
+            this.period = parseInt(val);
+          }
+        },
+        stop: function(){
+          this.stopped = true;
+          this.setArrowSpeed(0);
+        },
+        start: function(){
+          this.stopped = false;
+          this.setArrowSpeed(this.period);
+          this.tick();
+        }
+      },
+      broadcasts: ['tick'],
+      defaultBroadcasts: ['tick']
+    });
+  </script>
+</element>

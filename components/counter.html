@@ -1,0 +1,101 @@
+<element name="app-counter">
+  <template>
+    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-counter.css">
+    <div class="counter">
+      <span class="count-wrapper"><span class="count">0</span><span class="count-label"></span></span>
+    </div>
+  </template>
+  <description>
+    Listens for a message and counts
+  </description>
+  <tags>starter,math</tags>
+  <thumbnail>
+    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-counter.png" />
+  </thumbnail>
+  <friends>app-button</friends>
+  <script type="text/flathead">
+  </script>
+  <script type="text/ceci">
+    Ceci(this, {
+      init: function (params) {
+        this.count = 0;
+        this.setLabel(this.getAttribute('countItem'));
+        this.setIncrement(this.getAttribute("incrementBy") || 1);
+      },
+      updateDisplay: function() {
+        this.querySelector('.count').innerHTML = this.count;
+        // bypasses default broadcasting, so that the value
+        // is only sent along after a broadcast channel has been chosen
+        var label = "";
+
+        if (this.countItem){
+
+          label = this.countItem.trim();
+          var pluralChar = "";
+
+          if(Math.abs(this.count) > 1) {
+            var lastChar = label.charAt(label.length - 1);
+            if (lastChar) {
+              if(lastChar.toLowerCase() != "s"){
+                pluralChar = "s";
+                if(lastChar == lastChar.toUpperCase()){
+                  pluralChar = pluralChar.toUpperCase();
+                }
+              }
+            }
+          }
+          this.querySelector('.count-label').innerHTML = " " + label + pluralChar;
+        }
+        this.lookAtMe();
+        this.emit('update', this.count);
+      },
+      setIncrement : function(){
+        this.increment = this.getAttribute("incrementBy") || 1;
+      },
+      editable: {
+        countItem: {
+          type: "text",
+          description: "Name for what you're counting",
+          postset: function(v) {
+            this.updateDisplay(v);
+          }
+        },
+        incrementBy: {
+          type: "number",
+          min : 1,
+          description: "Count up or down with this number",
+          postset: function(v) {
+            this.increment = parseInt(v) || 1;
+          }
+        }
+      },
+      setLabel: function (value){
+        if (!value){
+          value = "";
+        }
+        this.countItem = value;
+        this.updateDisplay();
+      },
+      defaultListener: 'countUp',
+      broadcasts: ['update'],
+      listeners: {
+        countUp: function (listener,channel) {
+          this.count = this.count + parseInt(this.increment);
+          this.updateDisplay();
+        },
+        countDown: function (listener,channel) {
+          this.count = this.count - parseInt(this.increment);
+          this.updateDisplay();
+        },
+        resetCount: function (value, channel) {
+          this.count = parseInt(value);
+          if (isNaN(this.count)){
+            this.count = 0;
+          }
+          this.log("resetting counter to " + this.count, channel);
+          this.updateDisplay();
+        }
+      }
+    });
+  </script>
+</element>

@@ -1,0 +1,273 @@
+<element name="app-image-gallery">
+  <template>
+    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-image-gallery.css">
+
+    <h1>
+      <span class="folder-name"></span>
+      <span class="item-count-wrapper">
+      (<span class="item-count"></span>)</span>
+    </h1>
+    <div class="folder-content-wrapper">
+      <div class="data-view-toggle">
+        <a class="selected-item" show="single" href="#"><span class="icon"></span></a>
+        <a show="thumbnails" href="#"><span class="icon"></span></a>
+      </div>
+      <div class="show-wrapper show-single">
+        <div class="thumbnails"></div>
+        <div class="single">
+          <div class="photos"></div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <tags>image,photo,storage,data</tags>  
+  <description>
+    Stores and displays photos that you send to it. Has a single image and thumbnail mode.
+  </description>
+  <thumbnail>
+    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-image-gallery.png" />
+  </thumbnail>
+
+  <script type="text/ceci">
+    var element = this;
+    require(['https://cdn.firebase.com/v0/firebase.js'], function() {
+
+      function Editable(value, name) {
+        this.value = value;
+        this.name = name;
+        this.editor = editor;
+      }
+
+      Editable.prototype.toString = function() {
+        return this.value;
+      }
+
+      Ceci(element, {
+        init: function (params) {
+
+          t = this;
+
+          this.setAttribute('galleryName', this.getAttribute('galleryName') || 'Image Gallery');
+          //Toggle between thumbnails and single view
+          $(this).find(".data-view-toggle").on('click','a', function(evt) {
+            var show = $(this).attr("show");
+            t.changeView(show);
+            return false;
+          });
+
+          params = params ? params : {};
+          var appId = params.appId || "app123";
+          var io = new Firebase("https://flathead.firebaseio.com/" + appId + "/image-gallery");
+
+          var t = this;
+          t.io = io;
+          t.imageCount = 0;
+          t.currentImage = 1;
+
+          //Load up hammer-time for swiping photos left and right in the single view
+          $.ajax({
+            type: "GET",
+            url : "{{ASSET_HOST}}/assets/js/jquery.hammer.min.js",
+            dataType: "script",
+            success: function(){
+              var photoViewer = $(t).find(".single").hammer();
+              photoViewer.on("swiperight",function(ev){
+                t.changeImage("previous");
+              });
+              photoViewer.on("swipeleft",function(ev){
+                t.changeImage("next");
+              });
+            }
+          });
+
+          // Changes the images when it's swiped
+
+          //Todo - clean up the duplicate code here for adding to single and thumbnail view
+          var addItem = function(photoObj,name){
+
+            //Single Item
+            var imageWrapper = document.createElement('div');
+            imageWrapper.innerHTML = "<div class='image-container'><img src=" + photoObj["url"] + " /></div>";
+            imageWrapper.setAttribute('firebasename', name);
+            imageWrapper.setAttribute("class","image-wrapper");
+
+            var deleteMe = document.createElement('div');
+            deleteMe.innerHTML = "X";
+            deleteMe.setAttribute("class","delete-image");
+            $(imageWrapper).find(".image-container").append(deleteMe);
+
+            if(photoObj["caption"]){
+              var caption = document.createElement('div');
+              caption.innerHTML = photoObj["caption"] || "No caption";
+              caption.setAttribute("class","image-caption");
+              imageWrapper.appendChild(caption);
+            }
+
+            $(t).find('.photos').prepend(imageWrapper);
+            $(imageWrapper).find("img").addClass("warp-in");
+
+            $(imageWrapper).on('click', function(evt) {
+              var fireId = $(this).attr('firebasename');
+              var fireElt = t.io.child(fireId);
+              fireElt.once('value', function(snapshot) {
+                var url = snapshot.val()["url"];
+                t.broadcast('sendImage', url);
+              });
+            });
+
+            //Thumbnail Items
+            var imageWrapper = document.createElement('div');
+            imageWrapper.innerHTML = "<img src=" + photoObj["url"] + " />";
+            imageWrapper.setAttribute('firebasename', name);
+            imageWrapper.setAttribute("class","image-wrapper");
+            $(t).find('.thumbnails').prepend(imageWrapper);
+
+            $(imageWrapper).on('click', function(evt) {
+              var fireId = $(this).attr('firebasename');
+              var fireElt = t.io.child(fireId);
+              fireElt.once('value', function(snapshot) {
+                var url = snapshot.val()["url"];
+                t.broadcast('sendImage', url);
+              });
+              var index = $(this).index() + 1;
+              t.changeView("single");
+              t.changeImage(index);
+            });
+
+            $(deleteMe).on('click', function(evt) {
+              var img = $(this).closest(".image-wrapper");
+              var index = img.index() + 1;
+              var thumbImg = $(t).find(".thumbnails .image-wrapper:nth-child("+index+")");
+              thumbImg.remove();
+              img.remove();
+
+              var fireId = img.attr('firebasename');
+              var fireElt = t.io.child(fireId);
+
+              if(t.currentImage == t.imageCount) {
+                t.changeImage("previous");
+              }
+
+              fireElt.remove();
+            }); // End adding an item
+
+            //Prevent image dragging on swipe
+            $('img').on('dragstart', function(event) { event.preventDefault(); });
+
+          };
+          var resetList = function() {
+          }
+          var updateList = function() {
+          }
+          this.io.on('child_removed', function(snapshot) {
+            updateList();
+          });
+
+          // This generates the aggregate stats and builds the stats tables
+          this.io.on('value',function(snapshot){
+            t.imageCount = snapshot.numChildren();
+            $(t).find(".photos").width(290*t.imageCount);
+            $(t).find(".item-count").text( t.imageCount);
+          });
+
+          this.io.on('child_added', function(snapshot) {
+
+            addItem(snapshot.val(),snapshot.name());
+          });
+
+        },
+        changeView : function(show){
+          var t = this;
+          $(this).find(".data-view-toggle a").removeClass("selected-item");
+          $(this).find(".data-view-toggle a[show=" + show + "]").addClass("selected-item");
+          $(this).addClass("selected-item");
+          $(this).find(".show-wrapper").removeClass("show-single").removeClass("show-thumbnails").addClass("show-" + show);
+        },
+        changeImage : function(action){
+          var t = this;
+          if (parseInt(action)){
+            t.currentImage = parseInt(action);
+          }
+          if (action == "next"){
+            t.currentImage++;
+            if(t.currentImage > t.imageCount){
+              t.currentImage = t.imageCount;
+            }
+          }
+          if (action == "previous") {
+            t.currentImage--;
+            if(t.currentImage < 1){
+              t.currentImage = 1;
+            }
+          }
+          var newLeft = 290 - (t.currentImage*290);
+          $(t).find(".photos").css("left", newLeft);
+        },
+        addPhoto : function(v){
+          var image = {};
+          var hasURL = false;
+          var t = this;
+
+          if(typeof v == "object"){
+            v = v.toString();
+          }
+
+          if(typeof v == "string"){
+            image["url"] = v;
+            hasURL = true;
+          }
+
+          if(hasURL){
+            var imgElement = document.createElement("img");
+            $(imgElement).load(function() {
+              t.io.push(image);
+            });
+            $(imgElement).attr("src",v);
+          }
+
+        },
+        setTitle : function(v){
+          this.querySelector(".folder-name").innerHTML = v;
+        },
+        setTitle : function(v){
+          this.querySelector(".folder-name").innerHTML = v;
+        },
+        editable: {
+          galleryName: {
+            type: "text",
+            description: "A title for your image gallery",
+            postset: function(v) {
+              this.setTitle(v);
+            }
+          }
+        },
+        defaultListener: 'addItem',
+        broadcasts: ['sendImage'],
+        listeners: {
+          addItem: function (v, channel) {
+            this.lookAtMe();
+            this.addPhoto(v);
+            this.changeImage(1);
+          },
+          sendImage: function (v, channel) {
+            var t = this;
+            var photoList = this.querySelector(".single .photos");
+            var img = $(photoList).find(".image-wrapper:first-child");
+            var fireId = img.attr('firebasename');
+            var fireElt = t.io.child(fireId);
+              fireElt.once('value', function(snapshot) {
+                var url = snapshot.val()["url"];
+                t.broadcast('sendImage', url);
+              });
+          },
+          clearList: function (v, channel) {
+            this.log("clearing list", channel);
+            this.io.remove();
+            this.resetList();
+          }
+        }
+      });
+      callback();
+    });
+  </script>
+</element>

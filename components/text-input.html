@@ -1,0 +1,107 @@
+<element name="app-text-input">
+  <template>
+    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-text-input.css">
+    <input type="text"/><button>Submit</button>
+  </template>
+  <thumbnail>
+    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-text-input.png" />
+  </thumbnail>
+  <description>
+    A text input that broadcasts whatever a user types.
+  </description>
+  <tags>input,form</tags>
+  <script type="text/ceci">
+    function Text(value) {
+      this.value = value;
+      this.editor = 'app-text-input';
+    };
+    Text.prototype.toString = function() {
+      return String(this.value);
+    };
+    Ceci(this, {
+      init: function (params) {
+        var value = this.getAttribute('value');
+        this.querySelector("input").value = value;
+        var element = this;
+        this.button = this.querySelector('button');
+        this.input = this.querySelector('input');
+        this.setAttribute('inputName',this.getAttribute('inputName') || "Text Input");
+        this.input.setAttribute('placeholder', 'Placeholder Text');
+        this.querySelector('button').onclick = function (e) {
+          var input = element.querySelector('input[type="text"]');
+          element.broadcast('sendData', new Text(input.value), this.getAttribute("inputName"));
+          input.value = "";
+        };
+        this.updateConfig();
+
+        this.input.addEventListener("input", function (e) {
+          if (! element._fireonchange) return;
+          element.broadcast('sendData', new Text(element.input.value), this.getAttribute("inputName"));
+        }, false);
+
+        if (this.hasAttribute('placeholdertext')) {
+          this.querySelector("input").setAttribute("placeholder", this.getAttribute('placeholdertext'));
+        }
+        else {
+          this.setAttribute("placeholdertext", "Placeholder");
+        }
+        if (this.hasAttribute('buttontext')) {
+          this.querySelector("button").innerHTML = this.getAttribute('buttontext');
+        }
+        else {
+          this.setAttribute("buttontext", "OK");
+        }
+
+        this.input.addEventListener("keydown", function (e) {
+          if (element._fireonchange) return;
+          if (e.keyCode == 13) {
+            element.broadcast('sendData', new Text(element.input.value), this.getAttribute("inputName"));
+            element.input.value = '';
+          }
+        }, false);
+
+      },
+      broadcasts: ['sendData'],
+      defaultBroadcasts: ['sendData'],
+      listeners: {
+        setValue: function (val) {
+          this.querySelector('input[type="text"]').value = val.toString();
+        }
+      },
+      getCurrentValue: function() {
+        return new Text(this.querySelector('input').value);
+      },
+      updateConfig: function() {
+        if (this._fireonchange) {
+          this.classList.add('onchange');
+          this.button.classList.add('hidden');
+        } else {
+          this.classList.remove('onchange');
+          this.button.classList.remove('hidden');
+        }
+      },
+      editable: {
+        inputName: {
+          type: "text",
+          description: "The name of this field, helpful when saving data.",
+          postset: function(v) {}
+        },
+        placeholderText: {
+          type: "text",
+          description: "The text you want your input field to show by default.",
+          postset: function(v) {
+            this.querySelector("input").setAttribute("placeholder", v);
+          }
+        },
+        emitOnChange: {
+          type: "boolean",
+          description: "Emit on change",
+          postset: function(v) {
+            this._fireonchange = v == "true";
+            this.updateConfig();
+          }
+        }
+      }
+    });
+  </script>
+</element>

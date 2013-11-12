@@ -1,0 +1,37 @@
+<element name="app-header">
+  <template>
+    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-header.css">
+    <style type="text/css">
+    </style>
+    <header>Header</header>
+  </template>
+  <description>
+    A page header. You can send it a signal to navigate to that page.
+  </description>
+  <tags>starter,layout,navigation</tags>
+  <thumbnail>
+    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-header.png" />
+  </thumbnail>
+  <script type="text/ceci">
+    Ceci(this, {
+      init: function (params) {
+        this.setAttribute("headerLabel", this.getAttribute("headerLabel") || "Header");
+      },
+      editable: {
+        headerLabel: {
+          type: "text",
+          description: "Text for header label",
+          postset: function(v) {
+            this.querySelector("header").innerHTML = v
+          }
+        }
+      },
+      listeners: {
+        navigateHere: function (listener,channel) {
+          this.lookAtMe();
+        }
+      },
+      endpoint: true
+    });
+  </script>
+</element>

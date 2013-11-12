@@ -1,0 +1,18 @@
+app-timer {
+
+}
+
+app-timer .timer {
+  padding: .7rem 0rem;
+  background: black;
+  color: #BBB;
+  text-align: center;
+  font-size: font-size: 1.6rem;
+  background: -webkit-linear-gradient(top, black, #555);
+  border-bottom: solid 2px black;
+}
+
+app-timer .current-time {
+  font-size: 2.5rem;
+}
+

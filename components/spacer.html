@@ -1,0 +1,32 @@
+<element name="app-spacer">
+  <template>
+    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-spacer.css">
+    <style type="text/css">
+    </style>
+    <div class="spacer"></div>
+  </template>
+  <description>
+    A spacer to put between components.
+  </description>
+  <tags>layout</tags>
+  <thumbnail>
+    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-spacer.png" />
+  </thumbnail>
+  <script type="text/ceci">
+    Ceci(this, {
+      init: function (params) {
+        this.setAttribute("height", this.getAttribute("height") || 30 );
+      },
+      editable: {
+        height: {
+          type: "number",
+          description: "The height of the spacer.",
+          postset: function(v) {
+            this.querySelector(".spacer").style.height = v + "px";
+          }
+        }
+      },
+      endpoint: true
+    });
+  </script>
+</element>

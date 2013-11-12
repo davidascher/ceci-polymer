@@ -1,0 +1,171 @@
+<element name="app-map">
+
+  <template>
+    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-map.css">
+    <div>
+      <div class="map"></div>
+      <button class="pin">pin this location</button>
+    </div>
+  </template>
+  <description>
+    Displays a map centered on your location and optionally broadcasts locations the user identifies.
+  </description>
+  <tags>location,map,GPS</tags>
+  <thumbnail>
+    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-map.png" />
+  </thumbnail>
+  <script type="text/ceci">
+
+    function Location(value) {
+      this.value = value;
+      this.editor = 'app-map';
+    };
+    Location.prototype.toString = function() {
+      return String(this.value);
+    }
+
+
+    var element = this;
+    require(['http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js'], function(L) {
+      Ceci(element, {
+        init: function() {
+          element = this;
+          var locateAtStart = false;
+          var lat = this.getAttribute('lat');
+          var lng = this.getAttribute('lng');
+          if (! this.hasAttribute('lat')) {
+            lat = "51.2982709";
+            lng = "-116.96357390000004";
+            locateAtStart = true;
+          }
+
+          var map = L.map(
+            element.querySelector('.map'), {
+              center: new L.LatLng(lat,lng),
+              zoom: 4
+            }
+          );
+
+          L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {maxZoom: 18}).addTo(map);
+          var t = element;
+          t.map = map;
+
+          map.on('locationfound', t.onLocationFound);
+          map.on('locationerror', t.onLocationError);
+          map.on('moveend', t.noteLocationChange);
+          console.log("locateAtStart", locateAtStart);
+          if (locateAtStart) {
+            map.locate({setView: true, maxZoom: 16});
+          } else {
+            this.centerOn(lat, lng);
+            this.setZoom(5);
+          }
+
+          element._pin = element.querySelector(".pin");
+          element._pin.onclick = function(e) {
+            element.broadcast('location', element.map.getCenter());
+          }
+          element._pin.onclick();
+          if (! this.hasAttribute('pin')) {
+            this.setAttribute("pin", "false");
+          }
+          this.controlPin(this.getAttribute('placeholdertext') == "true");
+        },
+
+        noteLocationChange: function(e) {
+          var center = this.map.getCenter();
+          this.currentCenter = center;
+          element.setAttribute('lat', center.lat);
+          element.setAttribute('lng', center.lng);
+        },
+
+        getCurrentValue: function() {
+          return this.currentCenter.toString();
+        },
+
+        onLocationFound: function(e) {
+          var radius = e.accuracy / 2;
+
+          L.marker(e.latlng).addTo(this.map)
+            .bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+          L.circle(e.latlng, radius).addTo(this.map);
+        },
+
+        onLocationError: function(e) {
+          alert(e.message);
+        },
+
+        sendCenter: function (e) {
+          this.emit(new Location(e));
+        },
+
+        controlPin: function(truefalse) {
+          if (truefalse) {
+            this._pin.classList.remove('hidden');
+          } else {
+            this._pin.classList.add('hidden');
+          }
+        },
+
+        broadcast: function(e) {
+          this.sendCenter(e);
+        },
+
+        editable: {
+          "location": {
+            title: "Location",
+            type: "text",
+            description: "Set where the map should be centered (empty means where the phone is)",
+            postset: function(v) {
+              this.findLocationByName(v);
+            }
+          },
+          "pin": {
+            title: "Show pinpoint button",
+            type: "boolean",
+            description: "Show the button that emits current location",
+            postset: function(v) {
+              element.controlPin(v);
+            }
+          }
+        },
+        centerOn: function(lat, lng, type) {
+          var location = new L.LatLng(lat, lng);
+          this.map.panTo(location);
+
+          if (type == 'city' || type == 'administrative') {
+            this.map.setZoom(11);
+          } else {
+            this.map.setZoom(13);
+          }
+        },
+        defaultListener: "findLocationByName",
+        broadcasts: ['location'],
+        listeners: {
+          recordLocation: function(val) {
+            this.broadcast('location', this.map.getCenter());
+          },
+          centerOnLocation: function(location) {
+            this.map.panTo({'lat':Number(location.lat), 'lon':Number(location.lon)});
+          },
+          centerOnPhone: function(val) {
+            this.map.locate({setView: true, maxZoom: 16});
+            this.map.setZoom(10);
+          },
+          findLocationByName: function(val) {
+            if (!val) {
+              this.centerOnPhone();
+            } else {
+              $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + val,
+                function(v){
+                  element.centerOn(v[0].lat, v[0].lon, v[0].osm_type)
+                });
+            }
+          }
+        }
+      });
+      callback();
+    });
+  </script>
+</element>
