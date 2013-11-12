@@ -2,7 +2,7 @@ var fs = require('fs');
 
 fs.readdir(__dirname, function (err, files) {
   files.forEach(function (cssFilename, cssFilenameIndex) {
-    if (cssFilenameIndex > 1) return;
+    if (cssFilename.indexOf('counter') === -1) return;
     var cssFilenameMatch = cssFilename.match(/^app-([^\.]+).css$/);
     if (cssFilenameMatch) {
       fs.readFile(__dirname + '/' + cssFilename, 'utf8', function (cssFileErr, cssFileData) {
@@ -10,6 +10,10 @@ fs.readdir(__dirname, function (err, files) {
           cssFileData = cssFileData.toString();
           var htmlFileName = cssFilenameMatch[1] + '.html';
           fs.readFile(__dirname + '/' + htmlFileName, 'utf8', function (htmlFileErr, htmlFileData) {
+            if (htmlFileErr) {
+              console.log('Couldn\'t read ' + htmlFileName);
+              return;
+            }
             htmlFileData = htmlFileData.toString();
             var templateMatch = htmlFileData.match(/<template>(\s+)/);
             var spacing = templateMatch[1];
