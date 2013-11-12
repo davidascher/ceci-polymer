@@ -14,13 +14,15 @@ fs.readdir(__dirname, function (err, files) {
             var templateMatch = htmlFileData.match(/<template>(\s+)/);
             var spacing = templateMatch[1];
             var start = templateMatch.index + templateMatch[0].length;
+
             spacing = spacing.replace('\n', '');
 
+            var splitCssFileData = cssFileData.split('\n');
             cssFileData = '<style>\n' + spacing +
-              '  '  + cssFileData.split('\n').join('\n' + spacing + '  ') +
+              '  '  + splitCssFileData.slice(0, splitCssFileData.length - 1).join('\n' + spacing + '  ') +
               '\n' + spacing + '</style>';
 
-            htmlFileData = htmlFileData.substring(0, start) + cssFileData + '\n' + spacing + htmlFileData.substring(start);
+            htmlFileData = htmlFileData.substring(0, start) + cssFileData + '\n' + htmlFileData.substring(start);
 
             var oldStylesheetRegexp = new RegExp('<link rel="stylesheet" href="\{\{ASSET_HOST\}\}.*' + cssFilename + '"\s*/?\s*>(</link>)?');
 
