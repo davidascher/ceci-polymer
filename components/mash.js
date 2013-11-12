@@ -22,10 +22,10 @@ fs.readdir(__dirname, function (err, files) {
             spacing = spacing.replace('\n', '');
 
             var splitCssFileData = cssFileData.split('\n');
-            cssFileData = '<style>\n' + spacing +
-              '  '  + splitCssFileData.slice(0, splitCssFileData.length - 1).map(function (line) {
-                return line.length > 0 ? '\n' + spacing + '  ' : '\n';
-              }) +
+            cssFileData = '<style>\n' +
+              splitCssFileData.slice(0, splitCssFileData.length - 1).map(function (line) {
+                return '  ' + spacing + line;
+              }).join('\n') +
               '\n' + spacing + '</style>';
 
             htmlFileData = htmlFileData.substring(0, start) + cssFileData + '\n' + htmlFileData.substring(start);
@@ -33,7 +33,7 @@ fs.readdir(__dirname, function (err, files) {
             var oldStylesheetRegexp = new RegExp('<link rel="stylesheet" href="\{\{ASSET_HOST\}\}.*' + cssFilename + '"\s*/?\s*>(</link>)?');
 
             htmlFileData = htmlFileData.replace(oldStylesheetRegexp, '');
-
+console.log(cssFileData);
             fs.writeFile(__dirname + '/' + htmlFileName, htmlFileData);
           });
         }
