@@ -23,7 +23,9 @@ fs.readdir(__dirname, function (err, files) {
 
             var splitCssFileData = cssFileData.split('\n');
             cssFileData = '<style>\n' + spacing +
-              '  '  + splitCssFileData.slice(0, splitCssFileData.length - 1).join('\n' + spacing + '  ') +
+              '  '  + splitCssFileData.slice(0, splitCssFileData.length - 1).map(function (line) {
+                return line.length > 0 ? '\n' + spacing + '  ' : '\n';
+              }) +
               '\n' + spacing + '</style>';
 
             htmlFileData = htmlFileData.substring(0, start) + cssFileData + '\n' + htmlFileData.substring(start);
