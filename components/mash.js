@@ -20,11 +20,14 @@ fs.readdir(__dirname, function (err, files) {
             var start = templateMatch.index + templateMatch[0].length;
 
             spacing = spacing.replace('\n', '');
+            var indentedSpacing = spacing + '  ';
+
+            // indentedSpacing = indentedSpacing.replace(/ /g, '%')
 
             var splitCssFileData = cssFileData.split('\n');
             cssFileData = '<style>\n' +
               splitCssFileData.slice(0, splitCssFileData.length - 1).map(function (line) {
-                return '  ' + spacing + line;
+                return line.length > 0 ? indentedSpacing + line : '';
               }).join('\n') +
               '\n' + spacing + '</style>';
 
