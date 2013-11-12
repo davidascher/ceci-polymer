@@ -1,4 +1,4 @@
-<polymer-element name="app-header">
+<polymer-element>
   <template>
     <style>
       app-header header {
@@ -12,38 +12,38 @@
         text-align: center;
       }
     </style>
-
     <style type="text/css">
-    </style>
+</style>
     <header>Header</header>
   </template>
-  <description>
-    A page header. You can send it a signal to navigate to that page.
-  </description>
-  <tags>starter,layout,navigation</tags>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-header.png" />
-  </thumbnail>
-  <script type="text/ceci">
-    Ceci(this, {
-      init: function (params) {
-        this.setAttribute("headerLabel", this.getAttribute("headerLabel") || "Header");
+  <script>
+    Polymer("header", {
+      ready: function () {
+        this.ceci({
+          broadcasts: [],
+          defaultBroadcasts: undefined,
+          defaultListeners: [],
+          editable: {
+            headerLabel: {
+              type: "text",
+              description: "Text for header label",
+              postset: function (v) {
+                this.querySelector("header").innerHTML = v
+              }
+            },
+          },
+          listeners: {
+            navigateHere: function (listener,channel) {
+              this.lookAtMe();
+            }
+          },
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-header.png" />",
+          description: "A page header. You can send it a signal to navigate to that page.",
+          tags: ["starter","layout","navigation"]
+        });
       },
-      editable: {
-        headerLabel: {
-          type: "text",
-          description: "Text for header label",
-          postset: function(v) {
-            this.querySelector("header").innerHTML = v
-          }
-        }
-      },
-      listeners: {
-        navigateHere: function (listener,channel) {
-          this.lookAtMe();
-        }
-      },
-      endpoint: true
+      
     });
   </script>
 </polymer-element>

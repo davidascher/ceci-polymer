@@ -1,8 +1,8 @@
-<polymer-element name="app-maximum-number">
+<polymer-element>
   <template>
     <style>
       @import url("../style/fonts.css");
-
+      
       app-maximum-number .max {
         line-height: 3.8rem;
         text-align: center;
@@ -12,7 +12,7 @@
         color: #666;
         background: #DDD;
       }
-
+      
       app-maximum-number .max .max-wrapper {
         background: white;
         padding: .5rem 1rem;
@@ -21,64 +21,56 @@
         border-bottom: solid 1px #CCC;
       }
     </style>
-
-    <div class="max">
-      <span class="max-wrapper">Maximum: <span class="count">0</span><span></span>
+    <div class="max"> <span class="max-wrapper">Maximum: <span class="count">0</span><span></span>
+</span>
     </div>
   </template>
-  <description>
-    Listens for Floats and displays the maximum received.
-  </description>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-maximum-number.png" />
-  </thumbnail>
-  <tags>math,numbers</tags>
-  <friends>app-button</friends>
-  <script type="text/ceci">
-    Ceci(this, {
-      init: function (params) {
-        this.count = 0;
-        this.MAX = '';
-        this.value = 0;
-      },
-      updateDisplay: function () {
-        this.querySelector('.count').innerHTML = this.MAX;
-        this.lookAtMe();
-        this.emit(this.count);
-      },
-    broadcasts: ["maxValue"],
-    defaultBroadcasts: ["maxValue"],
-    defaultListener: 'calculateMax',
-      listeners: {
-        calculateMax: function (listener,channel) {
-          this.value = parseFloat(listener) || false;
-          if (listener == 0) this.value = 0;
-            if (this.value === false){
-              this.log("NOT counting up. " + listener + " is not a Float", channel);
-              return false;
-            }
-            if (this.count > 0){
-              if (this.MAX < this.value){
+  <script>
+    Polymer("maximum-number", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["maxValue"],
+          defaultBroadcasts: ["maxValue"],
+          defaultListeners: ["calculateMax"],
+          editable: {
+          },
+          listeners: {
+            calculateMax: function (listener,channel) {
+              this.value = parseFloat(listener) || false;
+              if (listener == 0) this.value = 0;
+                if (this.value === false){
+                  this.log("NOT counting up. " + listener + " is not a Float", channel);
+                  return false;
+                }
+                if (this.count > 0){
+                  if (this.MAX < this.value){
+                    this.MAX = this.value;
+                  }
+                }
+                else{
                 this.MAX = this.value;
               }
+              this.count++;
+              this.updateDisplay();
+              this.broadcast("maxValue",this.MAX);
             }
-            else{
-            this.MAX = this.value;
-          }
-          this.count++;
-          this.updateDisplay();
-          this.broadcast("maxValue",this.MAX);
-        },
-        resetMax: function (value, channel) {
-          this.count = parseInt(value);
-          if (isNaN(this.count)){
-            this.count = 0;
-            this.value = 0;
-            this.MAX = 'None';
-          }
-          this.updateDisplay();
-        }
-      }
+            resetMax: function (value, channel) {
+              this.count = parseInt(value);
+              if (isNaN(this.count)){
+                this.count = 0;
+                this.value = 0;
+                this.MAX = 'None';
+              }
+              this.updateDisplay();
+            }
+          },
+          friends: ["app-button"],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-maximum-number.png" />",
+          description: "Listens for Floats and displays the maximum received.",
+          tags: ["math","numbers"]
+        });
+      },
+      
     });
   </script>
 </polymer-element>

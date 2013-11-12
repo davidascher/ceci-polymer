@@ -1,4 +1,4 @@
-<polymer-element name="app-share-twitter">
+<polymer-element>
   <template>
     <style>
       .share-twitter
@@ -32,70 +32,58 @@
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: 15px 8px;  /* equivalent to 'top left' */
       }
-
+      
       .share-twitter .logo
       {
       	float: left;
       	height: 20px;
+      }
     </style>
-
     <div>
       <button class="share-twitter">Share on Twitter</button>
     </div>
   </template>
-  <description>Share a message on Twitter</description>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-share-twitter.png" />
-  </thumbnail>
-  <script type="text/ceci">
-    function ShareTwitter(theMessage) 
-    {
-      this.message = theMessage;
-    };
-    ShareTwitter.prototype.toString = function() {
-      return String(this.message);
-    };
-    Ceci(this, {
-      init: function (params) {
-        var t = this;
-        this.button = this.querySelector(".share-twitter");
-      	this.message = this.getAttribute('defaultMessage') || "";
-        this.button.onclick = function (e) {
-          t.tweet();
-        };
+  <script>
+    Polymer("share-twitter", {
+      ready: function () {
+        this.ceci({
+          broadcasts: [],
+          defaultBroadcasts: undefined,
+          defaultListeners: ["sendTweet"],
+          editable: {
+            defaultMessage: {
+              type: "text",
+              description: "The default tweet message",
+              postset: function (v) {
+                this.message = v;
+              }
+            },
+          },
+          listeners: {
+            updateMessage: function (obj, myChannel)
+              {
+                 this.lookAtMe();
+               this.message = obj.toString();
+              }
+            updateMessageAndSendTweet: function (obj, myChannel)
+              {
+                this.lookAtMe();
+                this.message = obj.toString();
+                this.tweet();
+              }
+            sendTweet: function (obj, myChannel)
+              {
+                this.lookAtMe();
+                this.tweet();
+              }
+          },
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-share-twitter.png" />",
+          description: "Share a message on Twitter",
+          tags: ["share-twitter.html"]
+        });
       },
-      tweet : function (obj) 
-      {
-          window.open("https://twitter.com/intent/tweet?text=" + this.message);
-      },
-      editable: {
-        defaultMessage: {
-          type: "text",
-          description: "The default tweet message",
-          postset: function(v) {
-            this.message = v;
-          }
-        }
-      },
-      defaultListener: 'sendTweet',
-      listeners: {
-      	updateMessage: function (obj, myChannel)
-      	{
-          this.lookAtMe();
-      		this.message = obj.toString();
-      	},
-        updateMessageAndSendTweet: function (obj, myChannel)
-        {
-          this.lookAtMe();
-          this.message = obj.toString();
-          this.tweet();
-        },
-        sendTweet: function (obj, myChannel)
-        {
-          this.lookAtMe();
-          this.tweet();
-        }
-      }
+      
     });
   </script>
 </polymer-element>

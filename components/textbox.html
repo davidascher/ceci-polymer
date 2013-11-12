@@ -1,12 +1,12 @@
-<polymer-element name="app-text">
+<polymer-element>
   <template>
     <style>
       @import url("../style/fonts.css");
-
+      
       app-text {
         padding: .5rem 1.5rem;
       }
-
+      
       app-text p {
         overflow: hidden;
         padding: 0;
@@ -17,34 +17,36 @@
         line-height: auto;
       }
     </style>
-
     <p></p>
   </template>
-  <description>Listen for a message and updates text</description>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-textbox.png" />
-  </thumbnail>
-  <tags>input,text,form</tags>
-  <script type="text/ceci">
-    Ceci(this, {
-      init: function (params) {
-        this.setValue('Heading');
-        this.setAttribute('text',"I'm a text box.")
+  <script>
+    Polymer("textbox", {
+      ready: function () {
+        this.ceci({
+          broadcasts: [],
+          defaultBroadcasts: undefined,
+          defaultListeners: [],
+          editable: {
+            text: {
+              type: "text",
+              description: "A text for your label to show up in your app",
+              postset: function (v) {
+                this.setValue(v);
+              }
+            },
+          },
+          listeners: {
+            setValue: function (val) {
+              this.querySelector('p').innerHTML = val.toString();
+            }
+          },
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-textbox.png" />",
+          description: "Listen for a message and updates text",
+          tags: ["input","text","form"]
+        });
       },
-      editable: {
-        text: {
-          type: "text",
-          description: "A text for your label to show up in your app",
-          postset: function(v) {
-            this.setValue(v);
-          }
-        }
-      },
-      listeners: {
-        setValue: function (val) {
-          this.querySelector('p').innerHTML = val.toString();
-        }
-      }
+      
     });
   </script>
 </polymer-element>

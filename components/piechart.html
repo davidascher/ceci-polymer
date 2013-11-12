@@ -1,10 +1,10 @@
-<polymer-element name="app-piechart">
+<polymer-element>
   <template>
     <style>
       app-piechart {
         padding: 1rem 0rem;
       }
-
+      
       app-piechart canvas {
         margin: 0 auto;
         display: block;
@@ -12,7 +12,7 @@
         border-radius: 200px;
         background: #EFEFEF;
       }
-
+      
       app-piechart .sheen {
         position: absolute;
         border-radius: 200px;
@@ -23,103 +23,40 @@
         border-bottom: solid 10px rgba(0,0,0,.1);
       }
     </style>
-
     <div class="sheen"></div>
-    <canvas id="canvas" width="200" height="200" />
+    <canvas id="canvas" width="200" height="200"></canvas>
   </template>
-  <description>
-    A piechart that can take up to three data sources.
-  </description>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-button.png" />
-  </thumbnail>
-  <tags>graph,chart,data</tags>
-  <script type="text/flathead">
-  </script>
-  <script type="text/ceci">
-    Ceci(this, {
-      init: function (params) {
-        this.pieSize = 200;
-        this.colors = {
-          "blue" : "#2f8bd1",
-          "green" : "#6fba00",
-          "yellow" : "#e6d400",
-          "orange" : "#ff7b00",
-          "red" : "#eb1900",
-          "pink" : "#ff4fa7",
-          "purple" : "#a016d2"
-        }
-        this.myColor = ["DDD","DDD","DDD"];
-        this.myData = [0,0,0];
+  <script>
+    Polymer("piechart", {
+      ready: function () {
+        this.ceci({
+          broadcasts: [],
+          defaultBroadcasts: undefined,
+          defaultListeners: ["setFirstValue"],
+          editable: {
+          },
+          listeners: {
+            setFirstValue: function (listener,channel) {
+              this.updateData(listener,channel,0);
+            }
+            setSecondValue: function (listener,channel) {
+              this.updateData(listener,channel,1);
+            }
+            setThirdValue: function (listener,channel) {
+              this.updateData(listener,channel,2);
+            }
+            resetValues: function (value, channel) {
+              this.myData = [0,0,0];
+              this.updatePie();
+            }
+          },
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-button.png" />",
+          description: "A piechart that can take up to three data sources.",
+          tags: ["graph","chart","data"]
+        });
       },
-      updatePie : function(){
-        var pS = this.pieSize;
-
-        var myTotal = 0;
-        for (var j = 0; j < this.myData.length; j++) {
-          myTotal += (typeof this.myData[j] == 'number') ? this.myData[j] : 0;
-        }
-
-        var canvas;
-        var ctx;
-        var lastend = 0;
-
-        canvas = document.getElementById("canvas");
-        ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, pS, pS);
-        ctx.textAlign = "center";
-
-        for (var i = 0; i < this.myData.length; i++) {
-          ctx.fillStyle = this.colors[this.myColor[i]];
-          ctx.beginPath();
-          ctx.moveTo(pS/2,pS/2);
-          ctx.arc(pS/2,pS/2,pS/2,lastend,lastend+(Math.PI*2*(this.myData[i]/myTotal)),false);
-          ctx.lineTo(pS/2,pS/2);
-          ctx.fill();
-
-          var angle = lastend + (Math.PI*2*(this.myData[i]/myTotal)/2);
-          var x = 100 + 50 * Math.cos(angle);
-          var y = 100 + 50 * Math.sin(angle);
-          var fontSize = 10 + (40 * this.myData[i]/myTotal);
-          ctx.font = fontSize + "px sans-serif";
-
-          if(this.myData[i] > 0){
-            ctx.fillStyle = "rgba(255,255,255,.3)";
-            ctx.fillText(this.myData[i], x , y+5);
-          }
-
-          lastend += Math.PI*2*(this.myData[i]/myTotal);
-        }
-      },
-      updateData : function(listener,channel,option){
-        if(parseInt(listener)){
-          listener = parseInt(listener);
-          this.myData[option] = listener;
-          this.myColor[option] = channel;
-        } else {
-          this.myData[option] = this.myData[option] + 1;
-          this.myColor[option] = channel;
-        }
-        this.updatePie();
-
-      },
-      defaultListener: 'setFirstValue',
-      listeners: {
-        setFirstValue: function (listener,channel) {
-          this.updateData(listener,channel,0);
-        },
-        setSecondValue: function (listener,channel) {
-          this.updateData(listener,channel,1);
-        },
-        setThirdValue: function (listener,channel) {
-          this.updateData(listener,channel,2);
-        },
-        resetValues: function (value, channel) {
-          this.myData = [0,0,0];
-          this.updatePie();
-        }
-      },
-      endpoint: true
+      
     });
   </script>
 </polymer-element>

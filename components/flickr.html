@@ -1,4 +1,4 @@
-<polymer-element name="app-flickr">
+<polymer-element>
   <template>
     <style>
       app-flickr {
@@ -9,7 +9,7 @@
         background-position: center;
         position: relative;
       }
-
+      
       app-flickr .loading-overlay {
         background: url(../images/flickr/throbber.gif) center no-repeat rgba(0,0,0,.8);
         width: 100%;
@@ -18,132 +18,95 @@
         top: 0;
         left: 0;
       }
-
+      
       app-flickr .wrapper {
         position: relative;
         line-height: 0rem;
       }
-
+      
       app-flickr .image {
         background: purple;
         max-width: 100%;
         height: 100%;
       }
     </style>
-
-    <div class="wrapper"><img height="100%" class="image"/></div>
+    <div class="wrapper">
+      <img height="100%" class="image" />
+    </div>
     <div class="loading-overlay"></div>
   </template>
-  <tags>photo,image</tags>
-  <description>
-    Shows images from Flickr
-  </description>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-flickr.png" />
-  </thumbnail>
-
-  <script type="text/ceci">
-    function Text(value) {
-      this.value = value;
-      this.editor = 'app-text-input';
-    };
-    Text.prototype.toString = function() {
-      return String(this.value);
-    };
-    Ceci(this, {
-      percent : 0,
-      _channel: null,
-
-      init: function (params) {
-        var t = this;
-        var img = this.querySelector("img");
-        if (! this.hasAttribute('searchTerm')) {
-          this.setAttribute('searchTerm', 'cat');
-        }
-
-        this.term = this.getAttribute('searchTerm');
-        this.loading = this.querySelector('.loading-overlay');
-
-        if (! this.hasAttribute('imageHeight')) {
-          this.setAttribute('imageHeight', '200');
-        }
-
-        this.setHeight(this.getAttribute('imageHeight'));
-
-        this.querySelector("img").onclick = function (e) {
-          t.sendImage();
-        }
-
-        this.newImage();
+  <script>
+    Polymer("flickr", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["send"],
+          defaultBroadcasts: undefined,
+          defaultListeners: ["setImageKeyword"],
+          editable: {
+            imageHeight: {
+              min: 0,
+              max: 400,
+              type: "number",
+              description: "Set the width of your image",
+              postset: function (v) {
+                this.setHeight(v);
+              }
+            },
+            searchTerm: {
+              min: 0,
+              max: 100,
+              type: "text",
+              description: "What kind of pictures are we looking for?",
+              postset: function (val) {
+                this.term = val;
+                this.newImage(val, this._channel);
+              }
+            },
+          },
+          listeners: {
+            setImageKeyword: function (val, channel) {
+              this.log("setting image keyword to: "+ val, channel);
+              this._channel = channel;
+              this.setAttribute("searchTerm", val); // causes recursion
+            }
+            setLocation: function (location, channel) {
+              this.log("setting location to: "+ location.value.lat + ',' + location.value.lng, channel);
+              this.lat = location.value.lat;
+              this.lng = location.value.lng;
+              this.newImage();
+            }
+            newImage: function () {
+              this.loading.style.display = "block";
+              var img = this.querySelector("img");
+              var API_KEY = "4b3f331df9427810328ad803b5b0cb9a";
+              var url = encodeURI("http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key="+API_KEY+"&text=" + this.term + "&safe_search=1&per_page=40");
+              if (this.lat && this.lng) {
+                url = url + "&lat="+this.lat + "&lon=" + this.lng;
+              } else {
+                url = url + "&sort=relevance"; // if not location based, let's make them relevant
+              }
+              var src;
+              var element = this;
+              $.getJSON(url + "&format=json&jsoncallback=?", function(data){
+                var count = data.photos.photo.length;
+                if (!count) return; // no photos found
+                var randomIndex = Math.floor(Math.random()*count);
+                var item = data.photos.photo[randomIndex];
+                var src = "http://farm"+ item.farm +".static.flickr.com/"+ item.server +"/"+ item.id +"_"+ item.secret +"_m.jpg";
+                $(img).attr("src",src);
+                // straight emit, will only broadcast if a channel has been chosen
+                element.sendImage();
+                element.loading.style.display = "none";
+              });
+            }
+          },
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-flickr.png" />",
+          description: "Shows images from Flickr",
+          tags: ["photo","image"]
+        });
       },
-      editable: {
-        "imageHeight": {
-          min : 0,
-          max: 400,
-          type: "number",
-          description: "Set the width of your image",
-          postset: function(v) {
-            this.setHeight(v);
-          }
-        },
-        searchTerm: { // XXX turn this to term and make an infinite loop. XXX debug
-          min : 0,
-          max: 100,
-          type: "text",
-          description: "What kind of pictures are we looking for?",
-          postset: function(val) {
-            this.term = val;
-            this.newImage(val, this._channel);
-          }
-        }
-      },
-      setHeight: function (val) {
-        this.style.height = val + "px";
-        this.querySelector(".image").style.height = val + "px";
-      },
-      sendImage : function(){
-        var img = this.querySelector("img");
-        this.emit('send', new Text(img.getAttribute("src")),"Image Url");
-      },
-      broadcasts: ['send'],
-      defaultListener : "setImageKeyword",
-      listeners: {
-        setImageKeyword: function(val, channel) {
-          this.log("setting image keyword to: "+ val, channel);
-          this._channel = channel;
-          this.setAttribute("searchTerm", val); // causes recursion
-        },
-        setLocation: function(location, channel) {
-          this.log("setting location to: "+ location.value.lat + ',' + location.value.lng, channel);
-          this.lat = location.value.lat;
-          this.lng = location.value.lng;
-          this.newImage();
-        },
-        newImage: function () {
-          this.loading.style.display = "block";
-          var img = this.querySelector("img");
-          var API_KEY = "4b3f331df9427810328ad803b5b0cb9a";
-          var url = encodeURI("http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key="+API_KEY+"&text=" + this.term + "&safe_search=1&per_page=40");
-          if (this.lat && this.lng) {
-            url = url + "&lat="+this.lat + "&lon=" + this.lng;
-          } else {
-            url = url + "&sort=relevance"; // if not location based, let's make them relevant
-          }
-          var src;
-          var element = this;
-          $.getJSON(url + "&format=json&jsoncallback=?", function(data){
-            var count = data.photos.photo.length;
-            if (!count) return; // no photos found
-            var randomIndex = Math.floor(Math.random()*count);
-            var item = data.photos.photo[randomIndex];
-            var src = "http://farm"+ item.farm +".static.flickr.com/"+ item.server +"/"+ item.id +"_"+ item.secret +"_m.jpg";
-            $(img).attr("src",src);
-            // straight emit, will only broadcast if a channel has been chosen
-            element.sendImage();
-            element.loading.style.display = "none";
-          });
-        }
-      }
+      
     });
   </script>
 </polymer-element>

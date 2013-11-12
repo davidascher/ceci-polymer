@@ -1,14 +1,14 @@
-<polymer-element name="app-star-rating">
+<polymer-element>
   <template>
     <style>
       app-star-rating {
         padding: 1rem 1.5rem;
       }
-
+      
       app-star-rating .wrapper {
         text-align: center;
       }
-
+      
       app-star-rating .rating-bar {
         margin: 0 auto;
         text-align: center;
@@ -21,7 +21,7 @@
         border-radius: 8px;
         display: inline-block;
       }
-
+      
       app-star-rating .rating-icon {
         width: 30px;
         height: 30px;
@@ -30,108 +30,44 @@
         display:inline-block;
         margin-right: 4px;
       }
-
+      
       app-star-rating .icon-enabled {
         background-image: url(../images/star_rating_on.png?3);
       }
     </style>
-
     <div class="wrapper">
       <div class="rating-bar"></div>
     </div>
   </template>
-  <description>
-    Pick a star-rating. You can configure the number of stars.
-  </description>
-  <tags>rating,review,stars</tags>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-star-rating.png" />
-  </thumbnail>
-  <friends>app-button</friends>
-  <script type="text/ceci">
-    function Scalar(value) {
-      this.value = value;
-      this.editor = 'app-rating';
-    };
-    Scalar.prototype.toString = function() {
-      return String(this.value);
-    };
-    Ceci(this, {
-      init: function (params) {
-        var rating = 0;
-        this.ratingBar = $(this).find(".rating-bar");
-        this.setAttribute('starNumber', this.getAttribute('starNumber') || 5);
-        this.ratingBar.on("click",".rating-icon",function(){
-          var index = $(this).index();
-          that.updateBar(index + 1);
-          that.sendRating(); 
-        });
-        var that = this;
-        //Load in external script
-        $.ajax({
-          type: "GET",
-          url : "{{ASSET_HOST}}/assets/js/jquery.hammer.min.js",
-          dataType: "script",
-          success: function(){
-            var rBar = that.ratingBar.hammer();
-            
-            rBar.on("touch",function(ev){
-              if($(ev.target).hasClass("rating-icon")){
-                index = $(ev.target).index();
-                that.updateBar(index + 1);
+  <script>
+    Polymer("rating", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["rating"],
+          defaultBroadcasts: ["rating"],
+          defaultListeners: [],
+          editable: {
+            starNumber: {
+              type: "number",
+              description: "Pick how many stars the rating can be",
+              postset: function (count) {
+                this.buildStars(count);
               }
-            });
-
-            rBar.on("drag",function(ev){
-              if($(ev.target).hasClass("rating-icon")){
-                index = $(ev.target).index();
-                that.updateBar(index + 1);
-              }
-            });
-
-            rBar.on("dragend",function(ev){
-              that.sendRating();
-            });
-          }
+            },
+          },
+          listeners: {
+            setRating: function (val) {
+              var value = parseInt(val);
+              this.updateBar(value);
+            }
+          },
+          friends: ["app-button"],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-star-rating.png" />",
+          description: "Pick a star-rating. You can configure the number of stars.",
+          tags: ["rating","review","stars"]
         });
       },
-      editable: {
-        starNumber: {
-          type: "number",
-          description: "Pick how many stars the rating can be",
-          postset: function(count) {
-            this.buildStars(count);
-          }
-        }
-      },
-      buildStars: function (count) {
-        this.ratingBar.html("");
-        for(var i = 1; i <= count; i++){
-        this.ratingBar.append("<div class='rating-icon'></div>");
-        }
-      },
-      updateBar : function(rating){
-        this.clearBar();
-        ratingIcons = this.ratingBar.find(".rating-icon");
-        ratingIcons.each(function(){
-          if($(this).index() <= rating -1){$(this).addClass("icon-enabled")}
-        });
-        this.rating = rating;
-      },
-      clearBar: function(){
-        this.ratingBar.find(".rating-icon").removeClass("icon-enabled");
-      },
-      sendRating : function(){
-        this.emit('rating', new Scalar(this.rating), "Rating");
-      },
-      broadcasts: ['rating'],
-      defaultBroadcasts: ['rating'],
-      listeners: {
-        setRating : function (val) {
-          var value = parseInt(val);
-          this.updateBar(value);
-        }
-      }
+      
     });
   </script>
 </polymer-element>

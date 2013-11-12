@@ -1,17 +1,16 @@
-<polymer-element name="app-metronome">
-
+<polymer-element>
   <template>
     <style>
       app-metronome {
         padding: 1rem;
       }
-
+      
       app-metronome .metronome-wrapper {
         margin: 0 auto;
         width: 50px;
         position: relative;
       }
-
+      
       app-metronome .metronome-body {
         background: #85560b;
         border-top: solid 2px #85560b;
@@ -24,21 +23,21 @@
         
         border-radius: 15px 15px 5px 5px;
         position: relative;
-
+      
       }
-
+      
       app-metronome .metronome-hole {
         background: white;
         height: 50px;
         width: 10px;
         margin: 0 auto;
-
+      
         border-radius: 3px 3px 10px  10px;
         border-top: solid 2px #85560b;
         border-left: solid 1px #85560b;
         border-right: solid 1px #85560b;
       }
-
+      
       app-metronome .metronome-shadow {
         background: #DDD;
         width: 50px;
@@ -52,7 +51,7 @@
         position: absolute;
         top: 62px;
       }
-
+      
       app-metronome .metronome-arrow {
         background: black;
         height: 45px;
@@ -65,9 +64,9 @@
         position: absolute;
         top: 10px;
         left: 15px;
-
+      
       }
-
+      
       app-metronome .metronome-animation {
         -webkit-animation-name: metronome;
         -webkit-animation-timing-function: linear;
@@ -77,7 +76,7 @@
         animation-iteration-count: infinite;
         
       }
-
+      
       @-webkit-keyframes metronome {
       	0% {-webkit-transform: rotate(0deg); }
       	25% {-webkit-transform: rotate(-30deg); }
@@ -85,7 +84,7 @@
       	75% {-webkit-transform: rotate(30deg); }
       	100% {-webkit-transform: rotate(0deg); }
       }
-
+      
       @keyframes metronome {
       	0% {transform: rotate(0deg); }
       	25% {transform: rotate(-30deg); }
@@ -93,21 +92,21 @@
       	75% {transform: rotate(30deg); }
       	100% {transform: rotate(0deg); }
       }
-
-
+      
+      
       /*Emit Strobe Animation*/
-
+      
       .emitanim {
         -webkit-animation: channelStrobe linear  .2s;
         animation: channelStrobe linear  .2s;
       }
-
+      
       @-webkit-keyframes channelStrobe {
         0%    { opacity: 1; }
         50%   { opacity: .3;}
         100%  { opacity: 1; }
       }
-
+      
       @keyframes channelStrobe {
        
         0%    { opacity: 1; }
@@ -115,7 +114,6 @@
         100%  { opacity: 1; }
       }
     </style>
-
     <div class="metronome-wrapper">
       <div class="metronome-shadow"></div>
       <div class="metronome-body">
@@ -124,111 +122,63 @@
       </div>
     </div>
   </template>
-  <tags>fun,animated,starter</tags>
-  <description>Counts the beat and sends out the beat count.</description>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-metronome.png" />
-  </thumbnail>
-  <script type="text/ceci">
-    Ceci(this, {
-      init: function() {
-        this.period = this.getAttribute("period") || 1;
-        this.count = 0;
-
-        var autoStart = this.getAttribute("autostart");
-        if (!autoStart){
-          autoStart = "true";
-        }
-        autoStart = autoStart.toLowerCase() === "true";
-
-        if (autoStart){
-          this.start();
-        }
-        else {
-          this.stop();
-        }
-
-        this.timeout = null;
-
-      },
-      setArrowSpeed : function(v){
-        var animDuration = v * 2;
-        var metronomeArrow = this.querySelector('.metronome-arrow');
-        metronomeArrow.classList.remove("metronome-animation");
-        if (v > 0 && !this.stopped){
-          metronomeArrow.offsetWidth = metronomeArrow.offsetWidth;
-          metronomeArrow.classList.add("metronome-animation");
-          metronomeArrow.style.webkitAnimationDuration = animDuration + "s";
-          metronomeArrow.style.animationDuration = animDuration + "s";
-        }
-      },
-      broadcast: function (e) {
-        this.emit(e);
-      },
-      onUnload: function (e) {
-        clearTimeout(this.timeout);
-      },
-      tick: function() {
-        if (this.unloaded || this.stopped){
-          // This stops the setting of the next setTimeout
-          return;
-        }
-        this.count++;
-        this.broadcast('tick', this.count);
-
-        // Emitting Animation Beta
-
-        var t = this;
-        var defer = function(){
-          t.tick();
-        };
-        this.timeout = setTimeout(defer, this.period*1000);
-      },
-      editable: {
-        "period": {
-          title: "Metronome Period",
-          min : .1,
-          max: 100,
-          type: "number",
-          description: "Set the period between metronome ticks",
-          postset: function(v) {
-            this.setArrowSpeed(v);
-          }
-        },
-        "autoStart": {
-          title: "Start on Load",
-          type: "boolean",
-          description: "Optionally starts the metronome when the app loads.",
-          postset: function(v){
-            console.log("POST SET:", v);
-            if (v === "true"){
-              this.start();
+  <script>
+    Polymer("metronome", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["tick"],
+          defaultBroadcasts: ["tick"],
+          defaultListeners: [],
+          editable: {
+            period: {
+              title: "Metronome Period",
+              min: 0.1,
+              max: 100,
+              type: "number",
+              description: "Set the period between metronome ticks",
+              postset: function (v) {
+                this.setArrowSpeed(v);
+              }
+            },
+            autoStart: {
+              title: "Start on Load",
+              type: "boolean",
+              description: "Optionally starts the metronome when the app loads.",
+              postset: function (v){
+                console.log("POST SET:", v);
+                if (v === "true"){
+                  this.start();
+                }
+                else{
+                  this.stop();
+                }
+              }
+            },
+          },
+          listeners: {
+            setPeriod: function (val) {
+              val = parseInt(val);
+              if (val > 0) {
+                this.period = parseInt(val);
+              }
             }
-            else{
-              this.stop();
+            stop: function (){
+              this.stopped = true;
+              this.setArrowSpeed(0);
             }
-          }
-        }
+            start: function (){
+              this.stopped = false;
+              this.setArrowSpeed(this.period);
+              this.tick();
+            }
+          },
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-metronome.png" />",
+          description: "Counts the beat and sends out the beat count.",
+          tags: ["fun","animated","starter"]
+        });
       },
-      listeners: {
-        setPeriod: function (val) {
-          val = parseInt(val);
-          if (val > 0) {
-            this.period = parseInt(val);
-          }
-        },
-        stop: function(){
-          this.stopped = true;
-          this.setArrowSpeed(0);
-        },
-        start: function(){
-          this.stopped = false;
-          this.setArrowSpeed(this.period);
-          this.tick();
-        }
-      },
-      broadcasts: ['tick'],
-      defaultBroadcasts: ['tick']
+      
     });
   </script>
 </polymer-element>

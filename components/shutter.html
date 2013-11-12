@@ -1,101 +1,101 @@
-<polymer-element name="app-shutter">
+<polymer-element>
   <template>
     <style>
       app-shutter {
         /* ----------------------------------------------------------------- */
-
+      
         /* This CSS file will make your Firefox OS app using Building Blocks */
-
+      
         /* compatible with: ie 9, Firefox 18, Chrome 24, Safari 5.1          */
-
+      
         /* By Arnau March - @rnowm                                           */
-
+      
         /* ----------------------------------------------------------------- */
-
+      
         /* Action menu */
-
+      
         /* Buttons */
-
+      
         /* Confirm */
-
+      
         /* Edit mode */
-
+      
         /* headers */
-
+      
         /* Input areas */
-
+      
         /* Switches */
-
+      
         /* Drawer */
-
+      
         /* Progress and activity */
-
+      
         /* Seek bars */
-
+      
         /* Tabs */
-
+      
         /* Filters */
-
+      
         /* Collision: This should be added to Gaia */
-
+      
         /* Switches and List buttons */
-
+      
         /* Missing in BB */
-
+      
         /* ----------------------------------
       * Input areas
       * ---------------------------------- */
-
+      
         /* fix for required inputs with wrong or empty value e.g. [type=email] */
-
+      
         /* To avoid colission with BB butons */
-
+      
         /* Fieldset */
-
+      
         /* Tidy (search/submit) */
-
+      
         /******************************************************************************
        * Right-to-Left layout
        */
-
+      
         /* ----------------------------------
        * Buttons
        * ---------------------------------- */
-
+      
         /* Press (default & recommend) */
-
+      
         /* Recommend */
-
+      
         /* Danger */
-
+      
         /* Danger Press */
-
+      
         /* Disabled (default & recommend) */
-
+      
         /* Danger disabled */
-
+      
         /* Disabled with dark background */
-
+      
         /* ----------------------------------
        * Buttons inside lists
        * ---------------------------------- */
-
+      
         /* Hacking box-shadow */
-
+      
         /* Press */
-
+      
         /* Disabled */
-
+      
         /* Icons */
-
+      
         /* ----------------------------------
        * Buttons inside lists, compact mode
        * ---------------------------------- */
-
+      
         /* Inputs inside of .button */
-
+      
         /* Hides dropdown arrow until bug #649849 is fixed */
-
+      
       }
       app-shutter form[role="dialog"][data-type="action"],
       app-shutter form[role="dialog"][data-type="object"],
@@ -342,7 +342,7 @@
         border-radius: 0.3rem;
         box-shadow: none;
         /* override the box-shadow from the system (performance issue) */
-
+      
         background: #ffffff url(input_areas/images/ui/shadow.png) repeat-x;
       }
       app-shutter textarea {
@@ -745,7 +745,7 @@
         background: #e7e7e7;
         text-align: left;
         /* For hacking box-shadows we need overflow:visible; so we lose text-overflows...*/
-
+      
         white-space: normal;
         overflow: visible;
       }
@@ -873,125 +873,39 @@
         display: none;
       }
     </style>
-
     <div class="start"></div>
     <div class="modal hidden">
       <div class="livefeed"></div>
       <div class="buttonbar hidden">
-        <button class="looksgood">Use this</button> 
-        <button class="startover">Try again</button> 
-        <button class="cancel">Cancel</button> 
+        <button class="looksgood">Use this</button>
+        <button class="startover">Try again</button>
+        <button class="cancel">Cancel</button>
       </div>
     </div>
     <button class="freeze hidden">freeze!</button>
-    <img class="snapshot">
+    <img class="snapshot" />
   </template>
-  <tags>camera,image,photo</tags>
-  <description>
-    Takes a picture with your device camera and broadcasts the image.
-  </description>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-shutter.png" />
-  </thumbnail>
-  <script type="text/ceci">
-    Ceci(this, {
-      startVideo: function() {
-        try {
-          var that = this;
-          window.navigator.mozGetUserMedia({video:true}, function(stream) {
-            that.livefeed.appendChild(that.video);
-            that.video.mozSrcObject = stream;
-            that.video.play();
-            that.modal.classList.remove('hidden');
-            that.livefeed.classList.remove('hidden');
-            that.freeze.classList.remove('hidden');
-            that.buttonbar.classList.add('hidden');
-            that.start.classList.add('hidden');
-            that.snapshot.src = '';
-          }, function(err) {
-            console.log(err);
-            that.stopMedia();
-          });
-        } catch(e) {
-          console.log(e);
-          that.stopMedia();
-        }
+  <script>
+    Polymer("shutter", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["pictureTaken"],
+          defaultBroadcasts: ["pictureTaken"],
+          defaultListeners: [],
+          editable: {
+          },
+          listeners: {
+            setValue: function (val) {
+              this.snapshot.src = val.toString();
+            }
+          },
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-shutter.png" />",
+          description: "Takes a picture with your device camera and broadcasts the image.",
+          tags: ["camera","image","photo"]
+        });
       },
-
-      stopMedia: function() {
-        this.video.mozSrcObject.stop();
-        this.video.mozSrcObject = null;
-        this.livefeed.removeChild(this.video);
-      },
-
-      hideControls: function() {
-        this.stopMedia();
-        this.modal.classList.add('hidden');
-        this.start.classList.remove("hidden");
-        this.buttonbar.classList.add("hidden");
-        this.snapshot.classList.add("hidden");
-      },
-
-      looksGood: function() {
-        this.hideControls();
-        console.log("emitting", this.snapshot.src);
-        this.emit('pictureTaken', this.snapshot.src);
-      },
-
-      captureImage: function() {
-        var canvas = document.createElement('canvas');
-        var ctx = canvas.getContext('2d');
-
-        canvas.width  = this.video.videoWidth/2;
-        canvas.height = this.video.videoHeight/2;
-        ctx.drawImage(this.video, 0, 0, canvas.width, canvas.height);
-        var dataurl = canvas.toDataURL('image/png');
-        this.setValue(dataurl);
-        this.buttonbar.classList.remove("hidden");
-        this.freeze.classList.add("hidden");
-        this.snapshot.classList.remove("hidden");
-        this.livefeed.classList.add('hidden');
-      },
-      init: function (params) {
-        var video_status = false;
-        var video = document.createElement("video");
-        this.video = video;
-        video.setAttribute("width", "100%");
-        video.setAttribute("height", "100%");
-        this.livefeed = this.querySelector(".livefeed");
-        this.snapshot = this.querySelector(".snapshot");
-        this.modal = this.querySelector(".modal");
-        this.start = this.querySelector(".start");
-        this.buttonbar = this.querySelector(".buttonbar");
-        this.looksgood = this.querySelector(".looksgood");
-        this.startover = this.querySelector(".startover");
-        this.cancel = this.querySelector(".cancel");
-        this.freeze = this.querySelector('.freeze');
-
-        var that = this;
-        this.start.onclick = function (e) {
-          that.startVideo();
-        }
-        this.freeze.onclick = function (e) {
-          that.captureImage();
-        };
-        this.startover.onclick = function (e) {
-          that.startVideo();
-        };
-        this.cancel.onclick = function (e) {
-          that.hideControls();
-        };
-        this.looksgood.onclick = function(e) {
-          that.looksGood();
-        }
-      },
-      listeners: {
-        setValue: function (val) {
-          this.snapshot.src = val.toString();
-        }
-      },
-      broadcasts: ['pictureTaken'],
-      defaultBroadcasts: ['pictureTaken']
+      
     });
   </script>
 </polymer-element>

@@ -1,4 +1,4 @@
-<polymer-element name="app-average-number">
+<polymer-element>
   <template>
     <style>
       app-average-number .average {
@@ -10,7 +10,7 @@
         color: #666;
         background: #DDD;
       }
-
+      
       app-average-number .average .average-wrapper {
         background: white;
         padding: .5rem 1rem;
@@ -19,53 +19,47 @@
         border-bottom: solid 1px #CCC;
       }
     </style>
-
-    <div class="average">
-      <span class="average-wrapper">Average: <span class="average-number">0</span></span>
+    <div class="average"> <span class="average-wrapper">Average: <span class="average-number">0</span></span>
     </div>
   </template>
-  <description>
-    Listens for integers and calculates the average.
-  </description>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-average-number.png" />
-  </thumbnail>
-  <tags>math,numbers</tags>
-  <script type="text/ceci">
-    Ceci(this, {
-      init: function (params) {
-        this.count = 0;
-        this.avrg = 0;
+  <script>
+    Polymer("average-number", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["averageValue"],
+          defaultBroadcasts: ["averageValue"],
+          defaultListeners: ["calculateAverage"],
+          editable: {
+          },
+          listeners: {
+            calculateAverage: function (listener, channel) {
+              newValue = parseFloat(listener.value);
+              if (isNaN(newValue)){
+                this.log("NOT counting up. " + listener.value + " was not a number", channel);
+                return false;
+              }
+          
+              this.avrg = (this.avrg * this.count + newValue) / (this.count + 1);
+              this.count++;
+          
+              this.updateDisplay();
+            }
+            resetAverage: function (value, channel) {
+              this.count = parseInt(value);
+              if (isNaN(this.count)){
+                this.count = 0;
+                this.avrg = 0;
+              }
+              this.updateDisplay();
+            }
+          },
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-average-number.png" />",
+          description: "Listens for integers and calculates the average.",
+          tags: ["math","numbers"]
+        });
       },
-      updateDisplay: function () {
-        this.querySelector('.average-number').innerHTML = Math.round(this.avrg*100)/100;
-        this.broadcast("averageValue", this.avrg);
-      },
-      broadcasts: ["averageValue"],
-      defaultBroadcasts: ["averageValue"],
-      defaultListener: 'calculateAverage',
-      listeners: {
-        calculateAverage: function (listener, channel) {
-          newValue = parseFloat(listener.value);
-          if (isNaN(newValue)){
-            this.log("NOT counting up. " + listener.value + " was not a number", channel);
-            return false;
-          }
-
-          this.avrg = (this.avrg * this.count + newValue) / (this.count + 1);
-          this.count++;
-
-          this.updateDisplay();
-        },
-        resetAverage: function (value, channel) {
-          this.count = parseInt(value);
-          if (isNaN(this.count)){
-            this.count = 0;
-            this.avrg = 0;
-          }
-          this.updateDisplay();
-        }
-      }
+      
     });
   </script>
 </polymer-element>

@@ -1,17 +1,16 @@
-<polymer-element name="app-map">
-
+<polymer-element>
   <template>
     <style>
       app-map {
       	display: block;
       }
-
+      
       app-map .map {
       	min-height: 300px;
       	display: block;
       	min-width: 100%;
       }
-
+      
       app-map .pinbar {
       	width: 100%;
       	display: inline-block;
@@ -21,22 +20,22 @@
       	background-repeat: none;
       	background: url(http://www.openstreetmap.org/assets/marker-red-7344acb6b41d14fbaa0476a8eb191da1.png) no-repeat left top;
       	margin-left: 10px;
-
+      
       }
-
+      
       app-map .pin {
       	width: 100%;
       }
-
+      
       @import url("../style/fonts.css");
-
+      
       app-map .pin:active {
         background: -moz-linear-gradient(top, #ddd, #ddd);
         background: -webkit-linear-gradient(top, #ddd, #ddd);
       }
-
+      
       app-map button {
-
+      
         font-family: "FiraSans", sans-serif;
         border: none;
         background: 0;
@@ -64,14 +63,14 @@
         line-height: 3.8rem;
         color: #333;
       }
-
-
+      
+      
       app-map .hidden {
       	display: none;
       }
-
+      
       /* required styles */
-
+      
       .leaflet-map-pane,
       .leaflet-tile,
       .leaflet-marker-icon,
@@ -129,17 +128,17 @@
       .leaflet-overlay-pane svg {
       	-moz-user-select: none;
       	}
-
+      
       .leaflet-tile-pane    { z-index: 2; }
       .leaflet-objects-pane { z-index: 3; }
       .leaflet-overlay-pane { z-index: 4; }
       .leaflet-shadow-pane  { z-index: 5; }
       .leaflet-marker-pane  { z-index: 6; }
       .leaflet-popup-pane   { z-index: 7; }
-
-
+      
+      
       /* control positioning */
-
+      
       .leaflet-control {
       	position: relative;
       	z-index: 7;
@@ -182,10 +181,10 @@
       .leaflet-right .leaflet-control {
       	margin-right: 10px;
       	}
-
-
+      
+      
       /* zoom and fade animations */
-
+      
       .leaflet-fade-anim .leaflet-tile,
       .leaflet-fade-anim .leaflet-popup {
       	opacity: 0;
@@ -198,7 +197,7 @@
       .leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
       	opacity: 1;
       	}
-
+      
       .leaflet-zoom-anim .leaflet-zoom-animated {
       	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
       	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
@@ -213,14 +212,14 @@
       	     -o-transition: none;
       	        transition: none;
       	}
-
+      
       .leaflet-zoom-anim .leaflet-zoom-hide {
       	visibility: hidden;
       	}
-
-
+      
+      
       /* cursors */
-
+      
       .leaflet-clickable {
       	cursor: pointer;
       	}
@@ -239,10 +238,10 @@
       	cursor: -webkit-grabbing;
       	cursor:    -moz-grabbing;
       	}
-
-
+      
+      
       /* visual tweaks */
-
+      
       .leaflet-container {
       	background: #ddd;
       	outline: 0;
@@ -258,16 +257,16 @@
       	background: white;
       	opacity: 0.5;
       	}
-
-
+      
+      
       /* general typography */
       .leaflet-container {
       	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
       	}
-
-
+      
+      
       /* general toolbar styles */
-
+      
       .leaflet-bar {
       	box-shadow: 0 1px 7px rgba(0,0,0,0.65);
       	-webkit-border-radius: 4px;
@@ -311,7 +310,7 @@
       	background-color: #f4f4f4;
       	color: #bbb;
       	}
-
+      
       .leaflet-touch .leaflet-bar {
       	-webkit-border-radius: 10px;
       	        border-radius: 10px;
@@ -333,17 +332,17 @@
       	        border-bottom-right-radius: 7px;
       	border-bottom: none;
       	}
-
-
+      
+      
       /* zoom control */
-
+      
       .leaflet-control-zoom-in {
       	font: bold 18px 'Lucida Console', Monaco, monospace;
       	}
       .leaflet-control-zoom-out {
       	font: bold 22px 'Lucida Console', Monaco, monospace;
       	}
-
+      
       .leaflet-touch .leaflet-control-zoom-in {
       	font-size: 22px;
       	line-height: 30px;
@@ -352,10 +351,10 @@
       	font-size: 28px;
       	line-height: 30px;
       	}
-
-
+      
+      
       /* layers control */
-
+      
       .leaflet-control-layers {
       	box-shadow: 0 1px 7px rgba(0,0,0,0.4);
       	background: #f8f8f9;
@@ -401,10 +400,10 @@
       	border-top: 1px solid #ddd;
       	margin: 5px -10px 5px -6px;
       	}
-
-
+      
+      
       /* attribution and scale controls */
-
+      
       .leaflet-container .leaflet-control-attribution {
       	background-color: rgba(255, 255, 255, 0.7);
       	box-shadow: 0 0 5px #bbb;
@@ -447,7 +446,7 @@
       .leaflet-control-scale-line:not(:first-child):not(:last-child) {
       	border-bottom: 2px solid #777;
       	}
-
+      
       .leaflet-touch .leaflet-control-attribution,
       .leaflet-touch .leaflet-control-layers,
       .leaflet-touch .leaflet-bar {
@@ -457,10 +456,10 @@
       .leaflet-touch .leaflet-bar {
       	border: 4px solid rgba(0,0,0,0.3);
       	}
-
-
+      
+      
       /* popup */
-
+      
       .leaflet-popup {
       	position: absolute;
       	text-align: center;
@@ -489,9 +488,9 @@
       	width: 17px;
       	height: 17px;
       	padding: 1px;
-
+      
       	margin: -10px auto 0;
-
+      
       	-webkit-transform: rotate(45deg);
       	   -moz-transform: rotate(45deg);
       	    -ms-transform: rotate(45deg);
@@ -500,7 +499,7 @@
       	}
       .leaflet-popup-content-wrapper, .leaflet-popup-tip {
       	background: white;
-
+      
       	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
       	}
       .leaflet-container a.leaflet-popup-close-button {
@@ -525,10 +524,10 @@
       	border-bottom: 1px solid #ddd;
       	border-top: 1px solid #ddd;
       	}
-
-
+      
+      
       /* div icon */
-
+      
       .leaflet-div-icon {
       	background: #fff;
       	border: 1px solid #666;
@@ -538,171 +537,65 @@
       	        border-radius: 2px;
       	}
     </style>
-
     <div>
       <div class="map"></div>
       <button class="pin">pin this location</button>
     </div>
   </template>
-  <description>
-    Displays a map centered on your location and optionally broadcasts locations the user identifies.
-  </description>
-  <tags>location,map,GPS</tags>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-map.png" />
-  </thumbnail>
-  <script type="text/ceci">
-
-    function Location(value) {
-      this.value = value;
-      this.editor = 'app-map';
-    };
-    Location.prototype.toString = function() {
-      return String(this.value);
-    }
-
-
-    var element = this;
-    require(['http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js'], function(L) {
-      Ceci(element, {
-        init: function() {
-          element = this;
-          var locateAtStart = false;
-          var lat = this.getAttribute('lat');
-          var lng = this.getAttribute('lng');
-          if (! this.hasAttribute('lat')) {
-            lat = "51.2982709";
-            lng = "-116.96357390000004";
-            locateAtStart = true;
-          }
-
-          var map = L.map(
-            element.querySelector('.map'), {
-              center: new L.LatLng(lat,lng),
-              zoom: 4
+  <script>
+    Polymer("map", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["location"],
+          defaultBroadcasts: undefined,
+          defaultListeners: ["findLocationByName"],
+          editable: {
+            location: {
+              title: "Location",
+              type: "text",
+              description: "Set where the map should be centered (empty means where the phone is)",
+              postset: function (v) {
+                this.findLocationByName(v);
+              }
+            },
+            pin: {
+              title: "Show pinpoint button",
+              type: "boolean",
+              description: "Show the button that emits current location",
+              postset: function (v) {
+                element.controlPin(v);
+              }
+            },
+          },
+          listeners: {
+            recordLocation: function (val) {
+              this.broadcast('location', this.map.getCenter());
             }
-          );
-
-          L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {maxZoom: 18}).addTo(map);
-          var t = element;
-          t.map = map;
-
-          map.on('locationfound', t.onLocationFound);
-          map.on('locationerror', t.onLocationError);
-          map.on('moveend', t.noteLocationChange);
-          console.log("locateAtStart", locateAtStart);
-          if (locateAtStart) {
-            map.locate({setView: true, maxZoom: 16});
-          } else {
-            this.centerOn(lat, lng);
-            this.setZoom(5);
-          }
-
-          element._pin = element.querySelector(".pin");
-          element._pin.onclick = function(e) {
-            element.broadcast('location', element.map.getCenter());
-          }
-          element._pin.onclick();
-          if (! this.hasAttribute('pin')) {
-            this.setAttribute("pin", "false");
-          }
-          this.controlPin(this.getAttribute('placeholdertext') == "true");
-        },
-
-        noteLocationChange: function(e) {
-          var center = this.map.getCenter();
-          this.currentCenter = center;
-          element.setAttribute('lat', center.lat);
-          element.setAttribute('lng', center.lng);
-        },
-
-        getCurrentValue: function() {
-          return this.currentCenter.toString();
-        },
-
-        onLocationFound: function(e) {
-          var radius = e.accuracy / 2;
-
-          L.marker(e.latlng).addTo(this.map)
-            .bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-          L.circle(e.latlng, radius).addTo(this.map);
-        },
-
-        onLocationError: function(e) {
-          alert(e.message);
-        },
-
-        sendCenter: function (e) {
-          this.emit(new Location(e));
-        },
-
-        controlPin: function(truefalse) {
-          if (truefalse) {
-            this._pin.classList.remove('hidden');
-          } else {
-            this._pin.classList.add('hidden');
-          }
-        },
-
-        broadcast: function(e) {
-          this.sendCenter(e);
-        },
-
-        editable: {
-          "location": {
-            title: "Location",
-            type: "text",
-            description: "Set where the map should be centered (empty means where the phone is)",
-            postset: function(v) {
-              this.findLocationByName(v);
+            centerOnLocation: function (location) {
+              this.map.panTo({'lat':Number(location.lat), 'lon':Number(location.lon)});
+            }
+            centerOnPhone: function (val) {
+              this.map.locate({setView: true, maxZoom: 16});
+              this.map.setZoom(10);
+            }
+            findLocationByName: function (val) {
+              if (!val) {
+                this.centerOnPhone();
+              } else {
+                $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + val,
+                  function(v){
+                    element.centerOn(v[0].lat, v[0].lon, v[0].osm_type)
+                  });
+              }
             }
           },
-          "pin": {
-            title: "Show pinpoint button",
-            type: "boolean",
-            description: "Show the button that emits current location",
-            postset: function(v) {
-              element.controlPin(v);
-            }
-          }
-        },
-        centerOn: function(lat, lng, type) {
-          var location = new L.LatLng(lat, lng);
-          this.map.panTo(location);
-
-          if (type == 'city' || type == 'administrative') {
-            this.map.setZoom(11);
-          } else {
-            this.map.setZoom(13);
-          }
-        },
-        defaultListener: "findLocationByName",
-        broadcasts: ['location'],
-        listeners: {
-          recordLocation: function(val) {
-            this.broadcast('location', this.map.getCenter());
-          },
-          centerOnLocation: function(location) {
-            this.map.panTo({'lat':Number(location.lat), 'lon':Number(location.lon)});
-          },
-          centerOnPhone: function(val) {
-            this.map.locate({setView: true, maxZoom: 16});
-            this.map.setZoom(10);
-          },
-          findLocationByName: function(val) {
-            if (!val) {
-              this.centerOnPhone();
-            } else {
-              $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + val,
-                function(v){
-                  element.centerOn(v[0].lat, v[0].lon, v[0].osm_type)
-                });
-            }
-          }
-        }
-      });
-      callback();
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-map.png" />",
+          description: "Displays a map centered on your location and optionally broadcasts locations the user identifies.",
+          tags: ["location","map","GPS"]
+        });
+      },
+      
     });
   </script>
 </polymer-element>

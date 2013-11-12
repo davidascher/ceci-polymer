@@ -1,13 +1,13 @@
-<polymer-element name="app-form">
+<polymer-element>
   <template>
     <style>
       @import url("../style/fonts.css");
-
+      
       app-form {
         padding: .75rem;
         background: #EEE;
       }
-
+      
       app-form h1 {
         font-size: 2.2rem;
         margin: 0rem 0rem .8rem 0rem;
@@ -17,12 +17,12 @@
         font-weight: 400;
         border-bottom: solid 2px #CCC;
       }
-
+      
       app-form .component broadcast,
       app-form .component listen {
         display: none;
       }
-
+      
       app-form .form-items {
         background: #EFEFEF;
         margin-bottom: .5rem;
@@ -31,7 +31,7 @@
         padding: .5rem;
         text-align: left;
       }
-
+      
       app-form .form-items input {
         width: 100%;
         font-size: 1.6rem;
@@ -40,34 +40,34 @@
         padding: .4rem .6rem;
         box-sizing: border-box;
       }
-
+      
       app-form .form-items .component {
         margin-bottom: .5rem;
       }
-
+      
       app-form .form-items input:last-child{
         margin-bottom: 0rem;
       }
-
+      
       app-form .form-items .helper {
         display: none;
       }
-
+      
       app-form .form-items {
         text-align: center;
       }
-
+      
       app-form .form-items .helper:only-child {
         padding: 1.5rem 0rem;
         text-align: center;
         display: block;
         color: #888;
       }
-
+      
       app-form .button:active {
         background-color: #3d911f;
       }
-
+      
       app-form .button {
         cursor: pointer;
         position: relative;
@@ -90,7 +90,7 @@
         width: 100%;
         margin: 0;
       }
-
+      
       app-form button {
         font-family: "FiraSans", sans-serif;
         border: none;
@@ -100,113 +100,68 @@
         position: relative;
       }
     </style>
-
     <style type="text/css">
-    </style>
-    <h1>Form Title</h1>
-    <div class="form-items">
-    </div>
+</style>
+     <h1>Form Title</h1>
+
+    <div class="form-items"></div>
     <div>
       <button class="button">Default</button>
     </div>
   </template>
-  <friends>app-fireworks,app-counter</friends>
-  <tags>form,data</tags>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-form.png" />
-  </thumbnail>
-  <description>
-    Broadcasts a "Click!" message when clicked.
-  </description>
-  <script type="text/ceci">
-    Ceci(this, {
-      init: function (params) {
-        var button = this.querySelector('button')
-        var t = this;
-        button.onclick = function () {
-          t.sendData();
-        }
-
-        this.setAttribute('formTitle', this.getAttribute("formTitle") || 'Form Title');
-        this.setAttribute('buttonLabel', this.getAttribute("buttonLabel") || 'Submit');
-        this.setAttribute('buttonColor', this.getAttribute("buttonColor") || '#4DB227');
-        this.setAttribute('textColor', this.getAttribute("textColor") || '#FFFFFF');
-        this.setAttribute("formFields", this.getAttribute("formFields")|| JSON.stringify(["Field 1","Field 2","Field 3"]));
-
-      },
-      buildForm : function(v){
-        var options = JSON.parse(v);
-        this.querySelector(".form-items").innerHTML = "";
-        for(var key in options) {
-          var item = document.createElement("input");
-          item.setAttribute("type","text")
-          item.setAttribute("placeholder",options[key])
-          this.querySelector(".form-items").appendChild(item);
-        }
-      },
-      sendData : function() {
-        var inputs = $(this).find(".form-items input");
-        console.log(inputs);
-        var sendData = []
-        $(inputs).each(function(i,input){
-          var item = {};
-          item["name"] = $(this).attr("placeholder");
-          item["value"] = $(this).val();
-          sendData.push(item);
+  <script>
+    Polymer("form", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["send"],
+          defaultBroadcasts: ["send"],
+          defaultListeners: [],
+          editable: {
+            formTitle: {
+              type: "text",
+              description: "A text for your label to show up in your app",
+              postset: function (v) {
+                this.setTitle(v);
+              }
+            },
+            formFields: {
+              type: "multiple",
+              description: "Menu Options",
+              postset: function (v) {
+                this.buildForm(v);
+              }
+            },
+            buttonLabel: {
+              type: "text",
+              description: "A text for your label to show up in your app",
+              postset: function (v) {
+                this.setLabel(v);
+              }
+            },
+            textColor: {
+              type: "text",
+              description: "The color of the button label",
+              postset: function (v) {
+                this.setTextColor(v);
+              }
+            },
+            buttonColor: {
+              type: "text",
+              description: "The color of your button",
+              postset: function (v) {
+                this.setButtonColor(v);
+              }
+            },
+          },
+          listeners: {
+          },
+          friends: ["app-fireworks","app-counter"],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-form.png" />",
+          description: "Broadcasts a "Click!" message when clicked.",
+          tags: ["form","data"]
         });
-        this.broadcast('send', JSON.stringify(sendData));
       },
-      editable: {
-        formTitle: {
-          type: "text",
-          description: "A text for your label to show up in your app",
-          postset: function(v) {
-            this.setTitle(v);
-          }
-        },
-        formFields: {
-          type: "multiple",
-          description: "Menu Options",
-          postset: function(v) {
-            this.buildForm(v);
-          }
-        },
-        buttonLabel: {
-          type: "text",
-          description: "A text for your label to show up in your app",
-          postset: function(v) {
-            this.setLabel(v);
-          }
-        },
-        textColor: {
-          type: "text",
-          description: "The color of the button label",
-          postset: function(v) {
-            this.setTextColor(v);
-          }
-        },
-        buttonColor: {
-          type: "text",
-          description: "The color of your button",
-          postset: function(v) {
-            this.setButtonColor(v);
-          }
-        }
-      },
-      setTitle: function (val) {
-        this.querySelector('h1').innerHTML = val;
-      },
-      setLabel: function (val) {
-        this.querySelector('button').innerHTML = val;
-      },
-      setButtonColor: function (val) {
-        this.querySelector('button').style.backgroundColor = val;
-      },
-      setTextColor: function (val) {
-        this.querySelector('button').style.color = val;
-      },
-      broadcasts: ['send'],
-      defaultBroadcasts: ['send']
+      
     });
   </script>
 </polymer-element>

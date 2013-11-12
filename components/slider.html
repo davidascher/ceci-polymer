@@ -1,4 +1,4 @@
-<polymer-element name="app-slider">
+<polymer-element>
   <template>
     <style>
       app-slider {
@@ -7,7 +7,7 @@
       app-slider {
        text-align: center;
       }
-
+      
       app-slider div {
         width: 100%;
         text-align: center;
@@ -16,7 +16,7 @@
         width: 100%;
         text-align: center;
       }
-
+      
       app-slider input {
         width: 100%;
         background: #212429;
@@ -25,7 +25,7 @@
         padding: 2rem;
         margin-right: 6rem;
       }
-
+      
       app-slider .value {
         float: right;
         font-size: 1.6rem;
@@ -36,7 +36,7 @@
         width: 45px;
         text-align: center;
       }
-
+      
       app-slider a {
         position: absolute;
         top: -1rem;
@@ -48,118 +48,80 @@
         width: 2rem;
         background-color: #707a8a;
       }
-
+      
       app-slider a:active, app-slider a:focus {
         outline: none;
       }
-
+      
       app-slider .ui-slider-range {
         background: #48c5ed;
         height: .3rem;
         position: absolute;
       }
     </style>
-
     <div>
       <form>
-        <input type="range" name="slider" min="0" max="50"><br>
+        <input type="range" name="slider" min="0" max="50" />
+        <br />
       </form>
       <p class="value"></p>
     </div>
   </template>
-  <description>
-    A slider that broadcasts a value.
-  </description>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-slider.png" />
-  </thumbnail>
-  <tags>form,numbers,input</tags>
-  <friends>app-map,app-shutter</friends>
-  <script type="text/ceci">
-    function Scalar(value) {
-      this.value = value;
-      this.editor = 'app-slider';
-    };
-    Scalar.prototype.toString = function() {
-      return String(this.value);
-    };
-    Ceci(this, {
-      init: function (params) {
-        this.slider = this.querySelector("input");
-        this.min = this.getAttribute('minValue') || 0;
-        this.max = this.getAttribute('maxValue') || 50;
-        this.setAttribute("minValue", this.min);
-        this.setAttribute("maxValue", this.max);
-        this.default = this.getAttribute("startingValue") || this.min;
-        this.valueIndicator = this.querySelector(".value");
-        this.valueIndicator.innerText = parseInt(this.default);
-        var self = this;
-        this.slider.addEventListener('input', function(e){
-          self.changeValue(self.slider.value);
-        });
-        this.addEventListener('click', function(e){
-          self.broadcast('changeValue', self.slider.value, "Slider value");
-        });
-      },
-      getCurrentValue: function() {
-        return this.getAttribute("value");
-      },
-      updateValue: function(val) {
-        this.slider.setAttribute("value", val);
-        this.setAttribute("value", val);
-        console.log(val);
-        this.valueIndicator.innerText = val;
-        this.broadcast('changeValue', new Scalar(val), "Slider value");
-      },
-      changeValue: function(val) {
-        this.setAttribute("value", val);
-        this.valueIndicator.innerText = val;
-        this.broadcast('changeValue', new Scalar(val), "Slider value");
-      },
-      broadcasts: ['changeValue'],
-      defaultBroadcasts: ['changeValue'],
-      emitValue: function(val) {},
-      editable: {
-        startingValue: {
-          type: "number",
-          description: "Starting value for the slider.",
-          postset: function(v) {
-          }
-        },
-        minValue: {
-          type: "number",
-          description: "The lowest possible value.",
-          postset: function(v) {
-            if (parseInt(v) || parseInt(v) == 0){
-              v = parseInt(v);
-              if (v >= this.max){
-                v = this.max - 1
-              };
-              this.slider.setAttribute('min', v);
-            }
-          }
-        },
-        maxValue: {
-          type: "number",
-          description: "The highest possible value.",
-          postset: function(v) {
-            if(parseInt(v)){
-              v = parseInt(v);
-              if(v <= this.min) {
-                v = this.min + 1;
+  <script>
+    Polymer("slider", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["changeValue"],
+          defaultBroadcasts: ["changeValue"],
+          defaultListeners: [],
+          editable: {
+            startingValue: {
+              type: "number",
+              description: "Starting value for the slider.",
+              postset: function (v) {
+                }
+            },
+            minValue: {
+              type: "number",
+              description: "The lowest possible value.",
+              postset: function (v) {
+                if (parseInt(v) || parseInt(v) == 0){
+                  v = parseInt(v);
+                  if (v >= this.max){
+                    v = this.max - 1
+                  };
+                  this.slider.setAttribute('min', v);
+                }
               }
-              this.max = v;
-              this.slider.setAttribute('max', v);
+            },
+            maxValue: {
+              type: "number",
+              description: "The highest possible value.",
+              postset: function (v) {
+                if(parseInt(v)){
+                  v = parseInt(v);
+                  if(v <= this.min) {
+                    v = this.min + 1;
+                  }
+                  this.max = v;
+                  this.slider.setAttribute('max', v);
+                }
+              }
+            },
+          },
+          listeners: {
+            setValue: function (val) {
+              var value = parseInt(val);
+              this.updateValue(value);
             }
-          }
-        }
+          },
+          friends: ["app-map","app-shutter"],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-slider.png" />",
+          description: "A slider that broadcasts a value.",
+          tags: ["form","numbers","input"]
+        });
       },
-      listeners: {
-        setValue : function (val) {
-          var value = parseInt(val);
-          this.updateValue(value);
-        }
-      }
+      
     });
   </script>
 </polymer-element>

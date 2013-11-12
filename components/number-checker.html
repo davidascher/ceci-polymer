@@ -1,4 +1,4 @@
-<polymer-element name="app-number-checker">
+<polymer-element>
   <template>
     <style>
       app-number-checker .checker {
@@ -12,18 +12,18 @@
         border-bottom: solid 2px black;
         position: relative;
       }
-
+      
       app-number-checker select {
         background: #FFFFFE;
         font-size: 1.2rem;
         color: #333;
       }
-
+      
       app-number-checker input {
       	text-align: center;
         width: 45px;
       }
-
+      
       app-number-checker .check-indicator {
         width:  16px;
         height: 16px;
@@ -36,7 +36,7 @@
         background-image: -webkit-radial-gradient( #999 0% ,#999 30%, #999  31% ,   #555 100%);
         background-image: -moz-radial-gradient( #BBB 0% ,#BBB 30%, #BBB  31% ,   #555 100%);
       }
-
+      
       app-number-checker .check-indicator .indicator-sheen {
         position: absolute;
         top: 1px;
@@ -47,7 +47,7 @@
         left: 4px;
         opacity: .2;
       }
-
+      
       app-number-checker .check-light {
         width:  16px;
         height: 16px;
@@ -55,17 +55,17 @@
         opacity: 0;
         border-radius: 10px;
       }
-
+      
       app-number-checker [light=bad] .check-light {
         background-image: -webkit-radial-gradient(#ed3e2c 0%,#ed3e2c 30%, #ed3e2c 31%,#701107 100%);
         background-image: -moz-radial-gradient(#ed3e2c 0%,#ed3e2c 30%,#ed3e2c 31%,#701107 100%);
       }
-
+      
       app-number-checker [light=good] .check-light {
         background-image: -webkit-radial-gradient(#79c40f 0%,#79c40f 30%,#79c40f 31%,#52830c 100%);
         background-image: -moz-radial-gradient(#79c40f 0%,#79c40f 30%,#79c40f 31%,#52830c 100%);
       }
-
+      
       app-number-checker .check-strobe {
         -webkit-animation-name: check-strobe;
         -webkit-animation-timing-function: linear;
@@ -76,13 +76,13 @@
         -moz-animation-iteration-count: once;
         -moz-animation-duration: 1s;
       }
-
+      
       @-webkit-keyframes check-strobe {
         0% {opacity: 1; }
         80% {opacity: 1; }
         100% {opacity: 0; }
       }
-
+      
       @-moz-keyframes check-strobe {
         0% {opacity: 1; }
         5% {opacity: .2; }
@@ -92,11 +92,11 @@
         96% {opacity: 1; }
         100% {opacity: 0; }
       }
-
+      
       app-number-checker .buttons {
         background: #222;
       }
-
+      
       app-number-checker .buttons .button {
         display: block;
         float: left;
@@ -105,8 +105,8 @@
         border: solid 2px #DDD;
         font-size: 1.2rem;
         margin: 1px;
+      }
     </style>
-
     <div class="checker">
       <select id="blah">
         <option value="greater">Greater than</option>
@@ -114,7 +114,7 @@
         <option value="equal">Equal to</option>
         <option value="notEqual">Not equal to</option>
         <option value="lessEqual">Less than or equal to</option>
-        <option value="less">Less than </option>
+        <option value="less">Less than</option>
       </select>
       <input type="number" />
       <div class="check-indicator">
@@ -123,114 +123,34 @@
       </div>
     </div>
   </template>
-  <tags>numbers,logic,math</tags>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-number-checker.png" />
-  </thumbnail>
-  <description>
-    Checks if an incoming number meets a certain criteria.
-  </description>
-  <script type="text/flathead">
-  </script>
-  <script type="text/ceci">
-    Ceci(this, {
-      init: function (params) {
-        this.setAttribute("checkAgainst", this.getAttribute("checkAgainst") || 5);
-        this.setAttribute("checkFor", this.getAttribute("checkFor") || "greater");
-
-        this.count = 0;
-        this.incomingNumber;
-        this.checkAgainst = this.getAttribute("checkAgainst");
-        this.checkFor = this.getAttribute("checkFor");
-        this.indicator = this.querySelector(".check-indicator");
-
-        var that = this;
-
-        this.querySelector("input").onchange = function(e){
-          that.checkAgainst = e.target.value;
-          that.setAttribute("checkAgainst", that.checkAgainst);
-          that.fakeSave();
-        }
-
-        this.querySelector("input").value = this.checkAgainst;
-
-        var checkOptions = this.querySelector("select");
-
-        checkOptions.value = this.checkFor;
-
-        checkOptions.onchange = function(e){
-          if (!e)
-          var e = window.event;
-          that.checkFor = this.options[this.selectedIndex].value;
-          that.setAttribute("checkFor",that.checkFor);
-          that.fakeSave();
-        }
-      },
-      fakeSave : function() {
-        this.setAttribute("countItem",this.getAttribute("countItem"));
-      },
-      checkTheNumber: function () {
-        that = this;
-        var ok = false;
-
-        switch (this.checkFor) {
-          case 'greater':
-            if(this.incomingNumber > this.checkAgainst){ ok = true; }
-          break;
-          case 'greaterEqual':
-            if(this.incomingNumber >= this.checkAgainst){ ok = true; }
-          break;
-          case 'less':
-            if(this.incomingNumber < this.checkAgainst){ ok = true; }
-          break;
-          case 'lessEqual':
-            if(this.incomingNumber <= this.checkAgainst){ ok = true; }
-          break;
-          case 'equal':
-            if(this.incomingNumber == this.checkAgainst){ ok = true; }
-          break;
-          case 'notEqual':
-            if(this.incomingNumber != this.checkAgainst){ ok = true; }
-          break;
-        }
-        if(this.incomingNumber == false){
-          ok = false;
-        }
-        if(ok == true){
-          this.indicator.setAttribute("light","good");
-          this.broadcast('yes', this.incomingNumber);
-        } else {
-          this.indicator.setAttribute("light","bad");
-          this.broadcast('no', this.incomingNumber);
-        }
-        el = this.querySelector(".check-light");
-        el.classList.remove("check-strobe");
-        el.offsetWidth = el.offsetWidth;
-        el.addEventListener('webkitAnimationEnd', function(){
-          el.classList.remove("check-strobe");
+  <script>
+    Polymer("number-checker", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["yes","no"],
+          defaultBroadcasts: ["yes"],
+          defaultListeners: ["checkNumber"],
+          editable: {
+            countItem: {
+              type: "text",
+              description: "Name for what you're counting",
+              postset: function (v) {
+                }
+            },
+          },
+          listeners: {
+            checkNumber: function (listener,channel) {
+              this.incomingNumber = parseInt(listener) || false;
+              this.checkTheNumber();
+            }
+          },
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-number-checker.png" />",
+          description: "Checks if an incoming number meets a certain criteria.",
+          tags: ["numbers","logic","math"]
         });
-        el.addEventListener('animationend', function(){
-          el.classList.remove("check-strobe");
-        });
-        el.classList.add("check-strobe");
       },
-      editable: {
-        countItem: {
-          type: "text",
-          description: "Name for what you're counting",
-          postset: function(v) {
-          }
-        }
-      },
-      defaultListener: 'checkNumber',
-      broadcasts: ['yes', 'no'],
-      defaultBroadcasts: ['yes'],
-      listeners: {
-        checkNumber: function (listener,channel) {
-          this.incomingNumber = parseInt(listener) || false;
-          this.checkTheNumber();
-        }
-      }
+      
     });
   </script>
 </polymer-element>

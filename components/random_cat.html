@@ -1,76 +1,68 @@
-<polymer-element name="app-randomcat">
+<polymer-element>
   <template>
     <style>
       app-randomcat .wrapper {
         text-align: center;
         line-height: 0px;
       }
-
+      
       app-randomcat img {
         width: 80%;
       }
     </style>
-
-    <div class="wrapper"><img style="width: 30%" /></div>
+    <div class="wrapper">
+      <img style="width: 30%" />
+    </div>
   </template>
-  <description>
-    Shows a random cat. Choose black &amp; white or color!
-  </description>
-  <tags>starter,fun,cat</tags>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-randomcat.png" />
-  </thumbnail>
-  <script type="text/ceci">
-    Ceci(this, {
-      percent : 0,
-      init: function (params) {
-        var cat = this.querySelector("img");
-        var t = this;
-        cat.onclick = function(){
-          var img = t.querySelector("img");
-          t.broadcast('cat', img.src);
-        };
-        var percent = 80;
-        this.changeCat();
-        this.setAttribute('catwidth', percent);
+  <script>
+    Polymer("random_cat", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["cat"],
+          defaultBroadcasts: undefined,
+          defaultListeners: ["changeCat"],
+          editable: {
+            photoStyle: {
+              options: Color,Black and White,
+              type: "select",
+              description: "Pick what kind of photo you'd like.",
+              postset: function (v) {
+                }
+            },
+            catWidth: {
+              min: 0,
+              max: 100,
+              type: "number",
+              description: "Set the width of your cat",
+              postset: function (v) {
+                this.setWidth(v);
+              }
+            },
+          },
+          listeners: {
+            changeCat: function () {
+              var type = "";
+              if (this.getAttribute("photoStyle") != "Color"){
+                type = "/g/"
+              } else {
+                type ="";
+              };
+              var cat = this.querySelector("img");
+              var random = 600 - Math.floor((Math.random()*500));
+              var src = "http://placekitten.com/"+type+random+"/"+random;
+              cat.setAttribute("src", src);
+            }
+            setWidth: function (val){
+              this.querySelector("img").style.width = val + "%";
+             }
+          },
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-randomcat.png" />",
+          description: "Shows a random cat. Choose black &amp; white or color!",
+          tags: ["starter","fun","cat"]
+        });
       },
-      editable: {
-        photoStyle: {
-          options : ["Color","Black and White"],
-          type: "select",
-          description: "Pick what kind of photo you'd like.",
-          postset: function(v) {
-          }
-        },
-        catWidth: {
-          min : 0,
-          max: 100,
-          type: "number",
-          description: "Set the width of your cat",
-          postset: function(v) {
-            this.setWidth(v);
-          }
-        }
-      },
-      defaultListener: 'changeCat',
-      broadcasts: ['cat'],
-      listeners: {
-        changeCat: function () {
-          var type = "";
-          if (this.getAttribute("photoStyle") != "Color"){
-            type = "/g/"
-          } else {
-            type ="";
-          };
-          var cat = this.querySelector("img");
-          var random = 600 - Math.floor((Math.random()*500));
-          var src = "http://placekitten.com/"+type+random+"/"+random;
-          cat.setAttribute("src", src);
-        },
-        setWidth : function(val){
-         this.querySelector("img").style.width = val + "%";
-        }
-      }
+      
     });
   </script>
 </polymer-element>

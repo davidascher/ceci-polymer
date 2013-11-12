@@ -1,16 +1,16 @@
-<polymer-element name="app-form-submit">
+<polymer-element>
   <template>
     <style>
       @import url("../style/fonts.css");
-
+      
       app-form-submit {
         padding: 0;
       }
-
+      
       app-form-submit .button:active {
         background-color: #3d911f;
       }
-
+      
       app-form-submit .button {
         cursor: pointer;
         position: relative;
@@ -33,7 +33,7 @@
         width: 100%;
         margin: 0;
       }
-
+      
       app-form-submit button {
         font-family: "FiraSans", sans-serif;
         border: none;
@@ -42,7 +42,7 @@
         font-size: 1.6rem;
         position: relative;
       }
-
+      
       app-form-submit .property-list {
         list-style: none;
         margin: 0;
@@ -50,21 +50,21 @@
         font-size: .8em;
         background: #DDD;
       }
-
+      
       app-form-submit .property-list li {
         position: relative;
         background: white;
         border-bottom: solid 1px #CCC;
         overflow: auto;
       }
-
+      
       app-form-submit .property-list .name,
       app-form-submit .property-list .value {
         background: white;
         padding: 4px;
         color: #666;
       }
-
+      
       app-form-submit .property-list li .name {
         float: left;
         width: 30%;
@@ -74,7 +74,7 @@
         text-overflow: ellipsis;
         font-weight: bold;
       }
-
+      
       app-form-submit .property-list li .value {
         float: right;
         width: 63%;
@@ -82,109 +82,44 @@
         text-overflow: ellipsis;
       }
     </style>
-
     <style type="text/css">
-    </style>
+</style>
     <div>
       <ul class="property-list"></ul>
       <div>
         <button class="button">Submit</button>
       </div>
     </div>
-  </div>
   </template>
-  <tags>form,data</tags>
-  <thumbnail>
-    <img src="{{ASSET_HOST}}/assets/images/thumbnails/app-form-submit.png" />
-  </thumbnail>
-  <description>
-    When clicked I broadcast an aggregate of all my inputs
-  </description>
-  <script type="text/ceci">
-    function FormData(hash) {
-      // Turn the hash into a sequence (which should be in the right order, but we'll assume the current order)
-      this.seq = [];
-      this.hash = hash;
-      this.editor = 'sequence';
-      var that = this;
-      Object.keys(hash).forEach(function (key) {
-        var obj = {};
-        obj.name = key;
-        obj.value = hash[key].value;
-        obj.editor = hash[key].editor;
-        that.seq.push(obj);
-      });
-    };
-    FormData.prototype.toString = function(pretty) {
-      if (pretty) {
-        var seq = this.seq;
-        var parts = seq.map(function(cb, index) {
-          var obj = seq[index];
-          return obj.name+': ' + obj.value;
-        })
-        return parts.join(', ');
-      } else {
-        return JSON.stringify(this.seq);
-      }
-    }
-    FormData.prototype.toPrettyString = function() {
-      return JSON.stringify(this.seq.keys);
-    }
-
-    Ceci(this, {
-      init: function (params) {
-        var _this = this;
-        this._data = {};
-
-        this._list = this.querySelector('.property-list');
-
-        this.querySelector('.button').onclick = function (e) {
-          var v = new FormData(_this._data);
-          _this.broadcast('send', v);
-        };
-
-        Array.prototype.forEach.call(this.attributes, function (attr) {
-          if (attr.name.indexOf('data-') > -1) {
-            _this.data[attr.name] = attr.value;
-            this.syncList(attr.name);
-          }
+  <script>
+    Polymer("form-submit", {
+      ready: function () {
+        this.ceci({
+          broadcasts: ["send"],
+          defaultBroadcasts: ["send"],
+          defaultListeners: ["setValue"],
+          editable: {
+            buttonLabel: {
+              type: "text",
+              description: "aa",
+              postset: function (val) {
+                this.querySelector('button').innerHTML = val;
+              }
+            },
+          },
+          listeners: {
+            setValue: function (val, channel, type) {
+              this._data[type] = val;
+              this.syncList(type);
+            }
+          },
+          friends: [""],
+          thumbnail: "<img src="{{ASSET_HOST}}/assets/images/thumbnails/app-form-submit.png" />",
+          description: "When clicked I broadcast an aggregate of all my inputs",
+          tags: ["form","data"]
         });
       },
-      editable: {
-        buttonLabel: {
-          type: "text",
-          description: "aa",
-          postset: function(val) {
-            this.querySelector('button').innerHTML = val;
-          }
-        }
-      },
-      defaultListener: "setValue",
-      broadcasts: ['send'],
-      defaultBroadcasts: ['send'],
-      listeners: {
-        setValue: function (val, channel, type) {
-          this._data[type] = val;
-          this.syncList(type);
-        }
-      },
-      syncList: function (property) {
-        var value = this._data[property];
-        var fixedProperty = property.replace(/\s/g, '');
-        var currentListItem = this._list.querySelector('li[data-' + fixedProperty + ']');
-        if (!!value) {
-          if (!currentListItem) {
-            currentListItem = document.createElement('li');
-            this._list.appendChild(currentListItem);
-          }
-          currentListItem.innerHTML = '<div class="name">' + property + '</div><div class="value">' + value + '</div>';
-          currentListItem.setAttribute('data-' + fixedProperty, value);
-        } else {
-          if (currentListItem) {
-            this._list.removeChild(currentListItem);
-          }
-        }
-      }
+      
     });
   </script>
 </polymer-element>
