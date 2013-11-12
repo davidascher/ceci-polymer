@@ -37,8 +37,7 @@ fs.readdir(__dirname, function (err, files) {
 
             htmlFileData = htmlFileData.replace(oldStylesheetRegexp, '');
 
-            // console.log(cssFileData);
-
+            console.log('Mashed ' + cssFilename);
             fs.writeFile(__dirname + '/' + htmlFileName, htmlFileData);
           });
         }

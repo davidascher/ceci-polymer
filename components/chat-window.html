@@ -1,6 +1,69 @@
 <element name="app-chat-window">
   <template>
-    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-chat-window.css">
+    <style>
+      app-chat-window {
+        display: block;
+        position: relative;
+      }
+
+      app-chat-window header {
+        background: #333;
+        padding: 1.5rem;
+        color: white;
+      }
+
+      app-chat-window header h1 {
+        text-align: left;
+        font-size: 1.6rem;
+        color: #DDD;
+        font-weight: 400;
+      }
+
+      app-chat-window header .room-name-wrapper {
+        float: right;
+        color: #999;
+        font-size: 1.4rem;
+      }
+
+      app-chat-window .status,
+      app-chat-window .nick-name {
+        display: none;
+      }
+
+      app-chat-window h3 {
+        display: none;
+        font-size: 1.4rem;
+        font-family: "FiraSans", sans-serif;
+        text-transform: uppercase;
+        text-align: left;
+      }
+
+      app-chat-window ul {
+        margin: 0;
+        padding: 1rem 1.5rem;
+        list-style-type: none;
+        border-top: 1px solid #ccc;
+        height: 200px;
+        top: 7.5rem;
+        bottom: 0;
+        left: 1rem;
+        right: 1rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      app-chat-window li {
+        font-size: 1.2rem;
+        font-family: "FiraSans", sans-serif;
+        padding: 0.1rem 0rem;
+        color: #777;
+      }
+
+      app-chat-window li:last-child, app-data-list li:last-child {
+        border: none;
+      }
+    </style>
+
     <header class="fixed">
       <h1>Chat Room<span class="room-name-wrapper">Room: <span class="room-name"></span></span></h1>
       <h3>Status: <span class="status">Disconnected</span></h3>

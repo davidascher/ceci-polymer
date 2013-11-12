@@ -1,7 +1,12 @@
 <element name="app-audio-player">
   <!-- Put all of your component HTML into the 'template' tag -->
   <template>
-    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-audio-player.css"></link>
+    <style>
+      app-audio-player audio {
+        width: 100%;
+      }
+    </style>
+
     <audio controls>
     </audio>
   </template>

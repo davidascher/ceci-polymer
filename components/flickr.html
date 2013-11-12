@@ -1,6 +1,36 @@
 <element name="app-flickr">
   <template>
-    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-flickr.css">
+    <style>
+      app-flickr {
+        margin: 0 auto;
+        display: block;
+        text-align: center;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: relative;
+      }
+
+      app-flickr .loading-overlay {
+        background: url(../images/flickr/throbber.gif) center no-repeat rgba(0,0,0,.8);
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      app-flickr .wrapper {
+        position: relative;
+        line-height: 0rem;
+      }
+
+      app-flickr .image {
+        background: purple;
+        max-width: 100%;
+        height: 100%;
+      }
+    </style>
+
     <div class="wrapper"><img height="100%" class="image"/></div>
     <div class="loading-overlay"></div>
   </template>

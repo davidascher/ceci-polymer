@@ -1,6 +1,39 @@
 <element name="app-multi-line-input">
   <template>
-    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-multi-line-input.css">
+    <style>
+      @import url("../style/fonts.css");
+
+      app-multi-line-input textarea {
+        font-family: "FiraSans", sans-serif;
+        padding: .2rem;
+        resize: none;
+        font-size: 1.8rem;
+        height: 10rem;
+        max-height: 10rem;
+        line-height: 2rem;
+        margin: 0px;
+        background: url("../images/shadow.png") repeat-x scroll 0% 0% rgb(255, 255, 255);
+        border: 0.1rem solid rgb(204, 204, 204);
+        border-radius: 0.3rem 0.3rem 0.3rem 0.3rem;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        display: block;
+        width: 100%;
+      }
+
+      app-multi-line-input textarea:focus {
+
+      }
+
+      app-multi-line-input .inner-wrapper {
+        position: relative;
+      }
+
+      app-multi-line-input .outer-wrapper {
+        position: relative;
+      }
+    </style>
+
     <div class="outer-wrapper">
       <div class="inner-wrapper">
         <textarea></textarea>

@@ -1,6 +1,18 @@
 <element name="app-popcorn-maker">
   <template>
-    <link rel="stylesheet" href="{{ASSET_HOST}}/assets/style/app-popcorn-maker.css"></link>
+    <style>
+      app-popcorn-maker {
+        height: 330px;
+        width: 100%;
+      }
+
+      app-popcorn-maker iframe {
+        height: 100%;
+        width: 100%;
+        border: 0;
+      }
+    </style>
+
     <iframe class="popcorn-iframe" frameborder="0" mozallowfullscreen webkitallowfullscreen allowfullscreen></iframe>
   </template>
   <friends>app-button,app-counter</friends>
